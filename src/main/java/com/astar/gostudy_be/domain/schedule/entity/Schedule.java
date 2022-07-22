@@ -1,7 +1,7 @@
 package com.astar.gostudy_be.domain.schedule.entity;
 
 import com.astar.gostudy_be.domain.BaseTimeEntity;
-import com.astar.gostudy_be.domain.user.entity.User;
+import com.astar.gostudy_be.domain.user.entity.Account;
 import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,13 +33,13 @@ public class Schedule extends BaseTimeEntity {
 
     @JoinColumn(name = "creator_id")
     @ManyToOne(cascade = CascadeType.ALL)
-    private User user;
+    private Account account;
 
     @Builder
-    public Schedule(LocalDateTime dateTime, String content, String location, User user) {
+    public Schedule(LocalDateTime dateTime, String content, String location, Account account) {
         this.dateTime = dateTime;
         this.content = content;
         this.location = location;
-        this.user = user;
+        this.account = account;
     }
 }

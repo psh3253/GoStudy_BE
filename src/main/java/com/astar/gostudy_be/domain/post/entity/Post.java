@@ -2,7 +2,7 @@ package com.astar.gostudy_be.domain.post.entity;
 
 import com.astar.gostudy_be.domain.BaseTimeEntity;
 import com.astar.gostudy_be.domain.study.entity.Study;
-import com.astar.gostudy_be.domain.user.entity.User;
+import com.astar.gostudy_be.domain.user.entity.Account;
 import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,14 +38,14 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "creator_id")
     @ManyToOne(cascade = CascadeType.ALL)
     @NotNull
-    private User user;
+    private Account account;
 
     @Builder
-    public Post(Study study, String title, String content, String image, User user) {
+    public Post(Study study, String title, String content, String image, Account account) {
         this.study = study;
         this.title = title;
         this.content = content;
         this.image = image;
-        this.user = user;
+        this.account = account;
     }
 }

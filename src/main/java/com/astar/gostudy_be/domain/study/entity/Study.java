@@ -1,7 +1,7 @@
 package com.astar.gostudy_be.domain.study.entity;
 
 import com.astar.gostudy_be.domain.BaseTimeEntity;
-import com.astar.gostudy_be.domain.user.entity.User;
+import com.astar.gostudy_be.domain.user.entity.Account;
 import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -53,10 +53,10 @@ public class Study extends BaseTimeEntity {
     @JoinColumn(name = "creator_id")
     @ManyToOne(cascade = CascadeType.ALL)
     @NotNull
-    private User user;
+    private Account account;
 
     @Builder
-    public Study(String name, Category category, StudyType type, String location, int recruitment_number, Visibility visibility, JoinType joinType, String introduce, User user) {
+    public Study(String name, Category category, StudyType type, String location, int recruitment_number, Visibility visibility, JoinType joinType, String introduce, Account account) {
         this.name = name;
         this.category = category;
         this.type = type;
@@ -65,6 +65,6 @@ public class Study extends BaseTimeEntity {
         this.visibility = visibility;
         this.joinType = joinType;
         this.introduce = introduce;
-        this.user = user;
+        this.account = account;
     }
 }
