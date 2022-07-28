@@ -10,30 +10,34 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
+@NoArgsConstructor
 @Entity
 @Getter
-@NoArgsConstructor
-public class Participant {
-
+public class ParticipantEvaluation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "user_id")
-    @ManyToOne
+    @JoinColumn(name = "evaluating_user")
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne
     @NotNull
-    private Account account;
+    private Account evaluatingUser;
 
-    @JoinColumn(name = "study_id")
-    @ManyToOne
+    @JoinColumn(name = "evaluated_user")
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne
     @NotNull
-    private Study study;
+    private Account evaluatedUser;
+
+    @Column
+    @NotNull
+    private Integer score;
 
     @Builder
-    public Participant(Account account, Study study) {
-        this.study = study;
-        this.account = account;
+    public ParticipantEvaluation(Account evaluatingUser, Account evaluatedUser, Integer score) {
+        this.evaluatingUser = evaluatingUser;
+        this.evaluatedUser = evaluatedUser;
+        this.score = score;
     }
 }

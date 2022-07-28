@@ -7,6 +7,8 @@ import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -20,7 +22,8 @@ public class Post extends BaseTimeEntity {
     private Long id;
 
     @JoinColumn(name = "study_id")
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     private Study study;
 
@@ -36,7 +39,8 @@ public class Post extends BaseTimeEntity {
     private String image;
 
     @JoinColumn(name = "creator_id")
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     private Account account;
 

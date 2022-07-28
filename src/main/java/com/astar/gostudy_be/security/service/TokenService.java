@@ -24,8 +24,8 @@ public class TokenService {
     }
 
     public Token generateToken(String uid, String role) {
-        long accessTokenPeriod = 1000L * 10L;
-        long refreshTokenPeriod = 1000L * 60L;
+        long accessTokenPeriod = 1000L * 60L * 60L * 6L;
+        long refreshTokenPeriod = 1000L * 60L * 60L * 24L * 30L;
 
         Claims claims = Jwts.claims().setSubject(uid);
         claims.put("role", role);
@@ -61,7 +61,7 @@ public class TokenService {
     }
 
     public boolean verifyTokenOwner(String token, String email) {
-        Account account = accountRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        Account account = accountRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
         return Objects.equals(account.getRefreshToken(), token);
     }
 
@@ -71,8 +71,15 @@ public class TokenService {
 
     @Transactional
     public void saveRefreshToken(String token, String email) {
-        Account account = accountRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 업습니다."));
+        Account account = accountRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
         account.update(null, null, null, null, null, token);
+        accountRepository.save(account);
+    }
+
+    @Transactional
+    public void deleteRefreshToken(String email) {
+        Account account = accountRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
+        account.update(null, null, null, null, null, "deleted");
         accountRepository.save(account);
     }
 }

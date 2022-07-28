@@ -1,5 +1,6 @@
 package com.astar.gostudy_be.domain.study.entity;
 
+import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ public class Category {
     private Long id;
 
     @Column
+    @NotNull
     private String name;
 
     @Builder

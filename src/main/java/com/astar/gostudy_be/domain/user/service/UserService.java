@@ -22,7 +22,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account account = accountRepository.findByEmail(username).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        Account account = accountRepository.findByEmail(username).orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
         return new AccountAdapter(account);
     }
 }

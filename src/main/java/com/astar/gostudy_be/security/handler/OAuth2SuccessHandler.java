@@ -1,16 +1,20 @@
-package com.astar.gostudy_be.security;
+package com.astar.gostudy_be.security.handler;
 
 import com.astar.gostudy_be.domain.user.dto.AccountDto;
+import com.astar.gostudy_be.security.UserRequestMapper;
 import com.astar.gostudy_be.security.dto.Token;
 import com.astar.gostudy_be.security.service.TokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -37,13 +41,24 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private void writeTokenResponse(HttpServletResponse response, Token token)
             throws IOException {
+        Cookie accessTokenCookie = new Cookie("Auth", token.getAccessToken());
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setDomain("localhost");
+        accessTokenCookie.setMaxAge(60 * 60 * 6);
+        Cookie refreshTokenCookie = new Cookie("Refresh", token.getRefreshToken());
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setDomain("localhost");
+        refreshTokenCookie.setMaxAge(60 * 60 * 24 * 30);
+        Cookie isLoginCookie = new Cookie("IsLogin", "true");
+        isLoginCookie.setPath("/");
+        isLoginCookie.setDomain("localhost");
+        isLoginCookie.setMaxAge(60 * 60 * 6);
 
-        response.addHeader("Auth", token.getAccessToken());
-        response.addHeader("Refresh", token.getRefreshToken());
-        response.setContentType("application/json;charset=UTF-8");
-
-        PrintWriter writer = response.getWriter();
-        writer.println(objectMapper.writeValueAsString(token));
-        writer.flush();
+        response.addCookie(accessTokenCookie);
+        response.addCookie(refreshTokenCookie);
+        response.addCookie(isLoginCookie);
+        response.sendRedirect("http://localhost:8080/");
     }
 }

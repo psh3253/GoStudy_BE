@@ -2,7 +2,8 @@ package com.astar.gostudy_be.security.config;
 
 import com.astar.gostudy_be.domain.user.service.UserService;
 import com.astar.gostudy_be.security.filter.JwtAuthFilter;
-import com.astar.gostudy_be.security.OAuth2SuccessHandler;
+import com.astar.gostudy_be.security.handler.CustomLogoutSuccessHandler;
+import com.astar.gostudy_be.security.handler.OAuth2SuccessHandler;
 import com.astar.gostudy_be.security.service.CustomOAuth2Service;
 import com.astar.gostudy_be.security.service.TokenService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,8 @@ public class SecurityConfig {
 
     private final CustomOAuth2Service oAuth2Service;
     private final OAuth2SuccessHandler successHandler;
+
+    private final CustomLogoutSuccessHandler logoutSuccessHandler;
     private final TokenService tokenService;
     private final UserService userService;
 
@@ -31,12 +34,6 @@ public class SecurityConfig {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-//    @Bean
-//    @Override
-//    public AuthenticationManager authenticationManagerBean() throws Exception{
-//        return super.authenticationManagerBean();
-//    }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.httpBasic().disable()
@@ -44,13 +41,20 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
+                .antMatchers("/api/v1/join", "/api/v1/login", "/api/v1/categories").permitAll()
                 .antMatchers("/api/v1/**").hasRole("USER")
                 .anyRequest().permitAll()
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("http://localhost:8080/")
+                .logoutSuccessHandler(logoutSuccessHandler)
+                .permitAll()
                 .and()
                 .oauth2Login()
                 .successHandler(successHandler)
                 .userInfoEndpoint().userService(oAuth2Service);
-                http.addFilterBefore(new JwtAuthFilter(tokenService, userService), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthFilter(tokenService, userService), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
