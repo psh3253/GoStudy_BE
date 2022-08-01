@@ -2,14 +2,21 @@ package com.astar.gostudy_be.domain.study.dto;
 
 import com.astar.gostudy_be.domain.study.entity.*;
 import com.astar.gostudy_be.domain.user.entity.Account;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @NoArgsConstructor
 @Getter
+@Setter
 public class StudyCreateDto {
     private String name;
+
+    @JsonIgnore
+    private MultipartFile image;
 
     @JsonProperty("category_id")
     private Long categoryId;
@@ -28,12 +35,14 @@ public class StudyCreateDto {
 
     private String introduce;
 
-    public Study toEntity(Category category, Account account) {
+    public Study toEntity(Category category, Account account, StudyImage studyImage) {
         return Study.builder()
                 .name(name)
+                .image(studyImage)
                 .category(category)
                 .location(location)
                 .type(type)
+                .currentNumber(1)
                 .recruitmentNumber(recruitmentNumber)
                 .visibility(visibility)
                 .joinType(joinType)

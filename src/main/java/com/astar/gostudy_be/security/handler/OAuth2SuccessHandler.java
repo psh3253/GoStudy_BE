@@ -55,10 +55,15 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         isLoginCookie.setPath("/");
         isLoginCookie.setDomain("localhost");
         isLoginCookie.setMaxAge(60 * 60 * 6);
+        Cookie userEmailCookie = new Cookie("UserEmail", tokenService.getUid(token.getAccessToken()));
+        userEmailCookie.setPath("/");
+        userEmailCookie.setDomain("localhost");
+        userEmailCookie.setMaxAge(60 * 60 * 6);
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
         response.addCookie(isLoginCookie);
+        response.addCookie(userEmailCookie);
         response.sendRedirect("http://localhost:8080/");
     }
 }

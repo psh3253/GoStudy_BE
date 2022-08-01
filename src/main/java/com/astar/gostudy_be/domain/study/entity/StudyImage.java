@@ -12,20 +12,21 @@ import javax.persistence.*;
 @Getter
 public class StudyImage {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
     @NotNull
-    private String path;
+    private String filename;
 
     @Column
     @NotNull
-    private String originalName;
+    private String originalFileName;
 
     @Builder
-    public StudyImage(Long id, String path, String originalName) {
+    public StudyImage(Long id, String filename, String originalFileName) {
         this.id = id;
-        this.path = path;
-        this.originalName = originalName;
+        this.filename = filename;
+        this.originalFileName = originalFileName;
     }
 }

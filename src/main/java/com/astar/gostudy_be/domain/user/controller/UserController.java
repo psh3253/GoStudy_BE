@@ -53,9 +53,11 @@ public class UserController {
                 .path("/").httpOnly(true).domain("localhost").maxAge(60L * 60L * 24L * 30L).build();
         ResponseCookie isLoginCookie = ResponseCookie.from("IsLogin", "true")
                 .path("/").domain("localhost").maxAge(60L * 60L * 6L).build();
+        ResponseCookie userEmailCookie = ResponseCookie.from("UserEmail", user.get("email"))
+                .path("/").domain("localhost").maxAge(60L * 60L * 6L).build();
 
         return ResponseEntity.status(HttpStatus.OK)
-                .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), refreshTokenCookie.toString(), isLoginCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), refreshTokenCookie.toString(), isLoginCookie.toString(), userEmailCookie.toString())
                 .contentType(new MediaType("application", "json", StandardCharsets.UTF_8))
                 .body(token);
     }

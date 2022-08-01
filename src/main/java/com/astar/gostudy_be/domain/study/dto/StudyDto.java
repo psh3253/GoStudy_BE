@@ -3,12 +3,13 @@ package com.astar.gostudy_be.domain.study.dto;
 import com.astar.gostudy_be.domain.study.entity.JoinType;
 import com.astar.gostudy_be.domain.study.entity.Study;
 import com.astar.gostudy_be.domain.study.entity.StudyType;
+import com.astar.gostudy_be.domain.study.entity.Visibility;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @Getter
-public class StudyListDto {
+@NoArgsConstructor
+public class StudyDto {
     private Long id;
     private String name;
 
@@ -24,11 +25,17 @@ public class StudyListDto {
 
     private Integer recruitmentNumber;
 
+    private Visibility visibility;
+
     private JoinType joinType;
+
+    private Boolean isRecruiting;
 
     private String introduce;
 
-    public StudyListDto(Study study) {
+    private String creatorEmail;
+
+    public StudyDto(Study study) {
         this.id = study.getId();
         this.name = study.getName();
         this.filename = study.getImage().getFilename();
@@ -37,7 +44,10 @@ public class StudyListDto {
         this.location = study.getLocation();
         this.currentNumber = study.getCurrentNumber();
         this.recruitmentNumber = study.getRecruitmentNumber();
+        this.visibility = study.getVisibility();
         this.joinType = study.getJoinType();
+        this.isRecruiting = study.getIsRecruiting();
         this.introduce = study.getIntroduce();
+        this.creatorEmail = study.getAccount().getEmail();
     }
 }
