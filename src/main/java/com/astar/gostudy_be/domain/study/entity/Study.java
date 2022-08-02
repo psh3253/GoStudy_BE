@@ -114,6 +114,8 @@ public class Study extends BaseTimeEntity {
             this.joinType = study.getJoinType();
         if(study.getIntroduce() != null)
             this.introduce = study.getIntroduce();
+        if(study.getIsRecruiting() != null)
+            this.isRecruiting = study.getIsRecruiting();
         return this;
     }
 }

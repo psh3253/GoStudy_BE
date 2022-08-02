@@ -12,7 +12,6 @@ import com.astar.gostudy_be.domain.study.repository.StudyRepository;
 import com.astar.gostudy_be.domain.user.entity.Account;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.graph.Graph;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -21,10 +20,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -142,5 +138,14 @@ public class StudyService {
             throw new IllegalArgumentException("사용자가 스터디의 소유자랑 일치하지 않습니다.");
         }
         studyRepository.delete(study);
+    }
+
+    @Transactional
+    public Long closeStudy(Long studyId, Account account) {
+        Study study = studyRepository.findById(studyId).orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
+        if(!Objects.equals(study.getAccount().getEmail(), account.getEmail())) {
+            throw new IllegalArgumentException("사용자가 스터디의 소유자랑 일치하지 않습니다.");
+        }
+        return studyRepository.save(study.update(Study.builder().isRecruiting(false).build())).getId();
     }
 }

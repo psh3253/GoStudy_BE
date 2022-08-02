@@ -34,9 +34,12 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         Cookie isLoginCookie = new Cookie("IsLogin", "false");
         isLoginCookie.setMaxAge(-1);
 
+        Cookie userEmailCookie = new Cookie("UserEmail", "deleted");
+        userEmailCookie.setMaxAge(-1);
+
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
         response.addCookie(isLoginCookie);
-        response.sendRedirect("http://localhost:8080/");
+        response.addCookie(userEmailCookie);
     }
 }

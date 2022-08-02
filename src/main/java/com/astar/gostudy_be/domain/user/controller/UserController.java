@@ -61,18 +61,4 @@ public class UserController {
                 .contentType(new MediaType("application", "json", StandardCharsets.UTF_8))
                 .body(token);
     }
-
-    @GetMapping("/api/v1/logout")
-    public ResponseEntity<Void> logout(@CurrentUser Account account, HttpServletResponse response) {
-        tokenService.deleteRefreshToken(account.getEmail());
-
-        Cookie accessTokenCookie = new Cookie("Auth", "deleted");
-        accessTokenCookie.setMaxAge(-1);
-        Cookie refreshTokenCookie = new Cookie("Refresh", "deleted");
-        refreshTokenCookie.setMaxAge(-1);
-        response.addCookie(accessTokenCookie);
-        response.addCookie(refreshTokenCookie);
-
-        return ResponseEntity.ok(null);
-    }
 }

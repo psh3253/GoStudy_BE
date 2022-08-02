@@ -15,6 +15,8 @@ public class StudyDto {
 
     private String filename;
 
+    private Long categoryId;
+
     private String categoryName;
 
     private StudyType type;
@@ -39,6 +41,7 @@ public class StudyDto {
         this.id = study.getId();
         this.name = study.getName();
         this.filename = study.getImage().getFilename();
+        this.categoryId = study.getCategory().getId();
         this.categoryName = study.getCategory().getName();
         this.type = study.getType();
         this.location = study.getLocation();

@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -54,6 +53,11 @@ public class StudyController {
     @GetMapping("/api/v1/categories")
     public List<CategoryListDto> categories() {
         return studyService.findAllCategories();
+    }
+
+    @PostMapping("/api/v1/studies/{id}/close")
+    public Long close(@PathVariable Long id, @CurrentUser Account account) {
+        return studyService.closeStudy(id, account);
     }
 
     @ResponseBody
