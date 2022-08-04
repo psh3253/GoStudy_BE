@@ -1,5 +1,6 @@
 package com.astar.gostudy_be.domain.study.entity;
 
+import com.astar.gostudy_be.domain.BaseTimeEntity;
 import com.astar.gostudy_be.domain.user.entity.Account;
 import com.sun.istack.NotNull;
 import lombok.Builder;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Participant {
+public class Participant extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

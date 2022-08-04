@@ -2,7 +2,6 @@ package com.astar.gostudy_be.domain.study.entity;
 
 import com.astar.gostudy_be.domain.BaseTimeEntity;
 import com.astar.gostudy_be.domain.user.entity.Account;
-import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,34 +10,32 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
-@NoArgsConstructor
 @Entity
 @Getter
-public class ParticipantEvaluation extends BaseTimeEntity {
+@NoArgsConstructor
+public class Applicant extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @JoinColumn(name = "evaluating_user")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @ManyToOne
-    @NotNull
-    private Account evaluatingUser;
-
-    @JoinColumn(name = "evaluated_user")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @ManyToOne
-    @NotNull
-    private Account evaluatedUser;
+    Long id;
 
     @Column
-    @NotNull
-    private Integer score;
+    String message;
+
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "study_id")
+    @ManyToOne
+    Study study;
+
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "user_id")
+    @ManyToOne
+    Account account;
 
     @Builder
-    public ParticipantEvaluation(Account evaluatingUser, Account evaluatedUser, Integer score) {
-        this.evaluatingUser = evaluatingUser;
-        this.evaluatedUser = evaluatedUser;
-        this.score = score;
+    public Applicant(Long id, String message, Study study, Account account) {
+        this.id = id;
+        this.message = message;
+        this.study = study;
+        this.account = account;
     }
 }

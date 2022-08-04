@@ -1,14 +1,8 @@
 package com.astar.gostudy_be.domain.study.service;
 
 import com.astar.gostudy_be.domain.study.dto.*;
-import com.astar.gostudy_be.domain.study.entity.Category;
-import com.astar.gostudy_be.domain.study.entity.Participant;
-import com.astar.gostudy_be.domain.study.entity.Study;
-import com.astar.gostudy_be.domain.study.entity.StudyImage;
-import com.astar.gostudy_be.domain.study.repository.CategoryRepository;
-import com.astar.gostudy_be.domain.study.repository.ParticipantRepository;
-import com.astar.gostudy_be.domain.study.repository.StudyImageRepository;
-import com.astar.gostudy_be.domain.study.repository.StudyRepository;
+import com.astar.gostudy_be.domain.study.entity.*;
+import com.astar.gostudy_be.domain.study.repository.*;
 import com.astar.gostudy_be.domain.user.entity.Account;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +33,8 @@ public class StudyService {
 
     private final ParticipantRepository participantRepository;
 
+    private final ApplicantRepository applicantRepository;
+
     @Transactional(readOnly = true)
     public List<StudyListDto> findAllStudies() {
         return studyRepository.findAllByIsRecruitingIsTrue().stream()
@@ -68,61 +64,49 @@ public class StudyService {
 
     @Transactional
     public Long createStudy(StudyCreateDto studyCreateDto, Account account) {
+        String filename;
         if (studyCreateDto.getImage() != null) {
             String extension = StringUtils.getFilenameExtension(studyCreateDto.getImage().getOriginalFilename());
-            String filename = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")) + '.' + extension;
+            filename = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")) + '.' + extension;
 
             try {
-                File uploadDirectory = new File("C://uploads");
-                if (!uploadDirectory.exists())
-                    uploadDirectory.mkdir();
-                File imageDirectory = new File("C://uploads/image");
-                if (!imageDirectory.exists())
-                    imageDirectory.mkdir();
-                File imageFile = new File("C://uploads/image/" + filename);
+                File imageFile = new File("C://uploads/images/" + filename);
                 studyCreateDto.getImage().transferTo(imageFile);
 
-                File thumbnailImageDirectory = new File("C://uploads/thumbnail_image");
-                if(!thumbnailImageDirectory.exists())
-                    thumbnailImageDirectory.mkdir();
-                File thumbnailImageFile = new File("C://uploads/thumbnail_image/" + "thumbnail_" + filename);
+                File thumbnailImageFile = new File("C://uploads/thumbnail_images/" + "thumbnail_" + filename);
                 Image image = ImageIO.read(imageFile);
                 Image resizedImage = image.getScaledInstance(400, 300, Image.SCALE_SMOOTH);
                 BufferedImage newImage = new BufferedImage(400, 300, BufferedImage.TYPE_INT_RGB);
-                Graphics graphics= newImage.getGraphics();
-                graphics.drawImage(resizedImage, 0, 0,null);
+                Graphics graphics = newImage.getGraphics();
+                graphics.drawImage(resizedImage, 0, 0, null);
                 graphics.dispose();
                 ImageIO.write(newImage, extension, thumbnailImageFile);
-
-                StudyImage studyImage = StudyImage.builder()
-                        .originalFileName(studyCreateDto.getImage().getOriginalFilename())
-                        .filename(filename)
-                        .build();
-                StudyImage savedStudyImage = studyImageRepository.save(studyImage);
-
-                Category category = categoryRepository.findById(studyCreateDto.getCategoryId()).orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다."));
-                Study savedStudy = studyRepository.save(studyCreateDto.toEntity(category, account, savedStudyImage));
-
-                Participant creator = Participant.builder()
-                        .study(savedStudy)
-                        .account(account)
-                        .build();
-                participantRepository.save(creator);
-                return savedStudy.getId();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        } else {
+            filename = "default.jpg";
         }
-        return -1L;
+        StudyImage studyImage = StudyImage.builder()
+                .filename(filename)
+                .build();
+        StudyImage savedStudyImage = studyImageRepository.save(studyImage);
+
+        Category category = categoryRepository.findById(studyCreateDto.getCategoryId()).orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다."));
+        Study savedStudy = studyRepository.save(studyCreateDto.toEntity(category, account, savedStudyImage));
+
+        Participant creator = Participant.builder()
+                .study(savedStudy)
+                .account(account)
+                .build();
+        participantRepository.save(creator);
+        return savedStudy.getId();
     }
 
     @Transactional
     public Long updateStudy(StudyUpdateDto studyUpdateDto, Long studyId, Account account) {
         Study study = studyRepository.findById(studyId).orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
-        Category category = null;
-        if (studyUpdateDto.getCategoryId() != null) {
-            category = categoryRepository.findById(studyUpdateDto.getCategoryId()).orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다."));
-        }
+        Category category = categoryRepository.findById(studyUpdateDto.getCategoryId()).orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다."));
         if (!Objects.equals(studyUpdateDto.getId(), studyId)) {
             throw new IllegalArgumentException("스터디 번호가 일치하지 않습니다.");
         } else if (!Objects.equals(study.getAccount().getEmail(), account.getEmail())) {
@@ -143,9 +127,34 @@ public class StudyService {
     @Transactional
     public Long closeStudy(Long studyId, Account account) {
         Study study = studyRepository.findById(studyId).orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
-        if(!Objects.equals(study.getAccount().getEmail(), account.getEmail())) {
+        if (!Objects.equals(study.getAccount().getEmail(), account.getEmail())) {
             throw new IllegalArgumentException("사용자가 스터디의 소유자랑 일치하지 않습니다.");
         }
         return studyRepository.save(study.update(Study.builder().isRecruiting(false).build())).getId();
+    }
+
+    @Transactional
+    public Long participateStudy(Long studyId, String message, Account account) {
+        Study study = studyRepository.findById(studyId).orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
+        if(study.getCurrentNumber() >= study.getRecruitmentNumber())
+            throw new RuntimeException("모집 인원을 초과할 수 없습니다.");
+        if (study.getJoinType().name().equals("FREE")) {
+            Participant participant = Participant.builder()
+                    .study(study)
+                    .account(account)
+                    .build();
+            studyRepository.save(study.update(Study.builder()
+                    .currentNumber(study.getCurrentNumber() + 1)
+                    .build()));
+            log.info(study.getCurrentNumber().toString());
+            return participantRepository.save(participant).getId();
+        } else {
+            Applicant applicantParticipant = Applicant.builder()
+                    .message(message)
+                    .study(study)
+                    .account(account)
+                    .build();
+            return applicantRepository.save(applicantParticipant).getId();
+        }
     }
 }

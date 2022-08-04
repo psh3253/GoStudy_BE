@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -60,10 +61,15 @@ public class StudyController {
         return studyService.closeStudy(id, account);
     }
 
+    @PostMapping("/api/v1/studies/{id}/participate")
+    public Long participate(@PathVariable Long id, @RequestBody Map<String, String> data, @CurrentUser Account account) {
+        return studyService.participateStudy(id, data.get("message"), account);
+    }
+
     @ResponseBody
     @GetMapping("/images/study/{filename}")
     public Resource showStudyImage(@PathVariable String filename) throws MalformedURLException {
-        File imageFile = new File("C://uploads/thumbnail_image/" + filename);
+        File imageFile = new File("C://uploads/thumbnail_images/" + filename);
         return new UrlResource("file:" + imageFile.getAbsolutePath());
     }
 

@@ -1,5 +1,6 @@
 package com.astar.gostudy_be.domain.study.entity;
 
+import com.astar.gostudy_be.domain.BaseTimeEntity;
 import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Getter
-public class StudyImage {
+public class StudyImage extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,14 +20,9 @@ public class StudyImage {
     @NotNull
     private String filename;
 
-    @Column
-    @NotNull
-    private String originalFileName;
-
     @Builder
-    public StudyImage(Long id, String filename, String originalFileName) {
+    public StudyImage(Long id, String filename) {
         this.id = id;
         this.filename = filename;
-        this.originalFileName = originalFileName;
     }
 }

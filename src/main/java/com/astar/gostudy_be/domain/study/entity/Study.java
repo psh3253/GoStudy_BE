@@ -106,6 +106,8 @@ public class Study extends BaseTimeEntity {
             this.type = study.getType();
         if(study.getLocation() != null)
             this.location = study.getLocation();
+        if(study.getCurrentNumber() != null)
+            this.currentNumber = study.getCurrentNumber();
         if(study.getRecruitmentNumber() != null)
             this.recruitmentNumber = study.getRecruitmentNumber();
         if(study.getVisibility() != null)
