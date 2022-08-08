@@ -44,10 +44,6 @@ public class Account extends BaseTimeEntity{
     @Column
     private String introduce;
 
-    @JoinColumn(name = "interest_category_id")
-    @ManyToOne
-    private Category category;
-
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
@@ -62,8 +58,6 @@ public class Account extends BaseTimeEntity{
             this.image = image;
         if(introduce != null)
             this.introduce = introduce;
-        if(category != null)
-            this.category = category;
         if(roles != null)
             this.roles = roles;
         if(refreshToken != null)

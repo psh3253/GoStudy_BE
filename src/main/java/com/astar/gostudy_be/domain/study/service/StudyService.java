@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -37,7 +38,7 @@ public class StudyService {
 
     @Transactional(readOnly = true)
     public List<StudyListDto> findAllStudies() {
-        return studyRepository.findAllByIsRecruitingIsTrue().stream()
+        return studyRepository.findAllByIsRecruitingIsTrueAndVisibilityEquals(Visibility.PUBLIC).stream()
                 .map(StudyListDto::new)
                 .collect(Collectors.toList());
     }
@@ -57,9 +58,22 @@ public class StudyService {
     }
 
     @Transactional(readOnly = true)
+    public List<StudyListDto> findAllStudiesByAccount(Account account) {
+        return studyRepository.findAllByAccountEmail(account.getEmail()).stream()
+                .map(StudyListDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public StudyDto findStudy(Long studyId) {
         Study study = studyRepository.findById(studyId).orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
         return new StudyDto(study);
+    }
+
+    @Transactional(readOnly = true)
+    public Long findStudyId(String accessUrl) {
+        Study study = studyRepository.findStudyByAccessUrl(accessUrl).orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
+        return study.getId();
     }
 
     @Transactional
@@ -93,7 +107,17 @@ public class StudyService {
         StudyImage savedStudyImage = studyImageRepository.save(studyImage);
 
         Category category = categoryRepository.findById(studyCreateDto.getCategoryId()).orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다."));
-        Study savedStudy = studyRepository.save(studyCreateDto.toEntity(category, account, savedStudyImage));
+
+        String randomString = "";
+        do {
+            Random random = new Random();
+            randomString = random.ints(65, 123)
+                    .filter(i -> (i >= 65 && i <= 90) || (i >= 97 && i <= 122))
+                    .limit(10)
+                    .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                    .toString();
+        } while (studyRepository.countByAccessUrl(randomString) != 0);
+        Study savedStudy = studyRepository.save(studyCreateDto.toEntity(category, account, savedStudyImage, randomString));
 
         Participant creator = Participant.builder()
                 .study(savedStudy)
@@ -156,5 +180,24 @@ public class StudyService {
                     .build();
             return applicantRepository.save(applicantParticipant).getId();
         }
+    }
+
+    @Transactional
+    public Long withdrawStudy(Long studyId, Account account) {
+        Participant participant = participantRepository.findByStudyIdAndAccountEmail(studyId, account.getEmail()).orElseThrow(() -> new IllegalArgumentException("참석자가 존재하지 않습니다."));
+        participantRepository.delete(participant);
+
+        Study study = studyRepository.findById(studyId).orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
+        studyRepository.save(study.update(Study.builder()
+                .currentNumber(study.getCurrentNumber() - 1)
+                .build()));
+        return participant.getId();
+    }
+
+    @Transactional
+    public Long cancelApplicationStudy(Long studyId, Account account) {
+        Applicant applicant = applicantRepository.findByStudyIdAndAccountEmail(studyId, account.getEmail()).orElseThrow(() -> new IllegalArgumentException("신청자가 존재하지 않습니다."));
+        applicantRepository.delete(applicant);
+        return applicant.getId();
     }
 }

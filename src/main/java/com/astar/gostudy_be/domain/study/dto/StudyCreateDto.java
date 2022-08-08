@@ -35,7 +35,7 @@ public class StudyCreateDto {
 
     private String introduce;
 
-    public Study toEntity(Category category, Account account, StudyImage studyImage) {
+    public Study toEntity(Category category, Account account, StudyImage studyImage, String accessUrl) {
         return Study.builder()
                 .name(name)
                 .image(studyImage)
@@ -47,6 +47,7 @@ public class StudyCreateDto {
                 .visibility(visibility)
                 .joinType(joinType)
                 .introduce(introduce)
+                .accessUrl(accessUrl)
                 .account(account)
                 .isRecruiting(true)
                 .build();

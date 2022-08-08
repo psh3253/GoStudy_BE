@@ -35,6 +35,8 @@ public class StudyDto {
 
     private String introduce;
 
+    private String accessUrl;
+
     private String creatorEmail;
 
     public StudyDto(Study study) {
@@ -51,6 +53,7 @@ public class StudyDto {
         this.joinType = study.getJoinType();
         this.isRecruiting = study.getIsRecruiting();
         this.introduce = study.getIntroduce();
+        this.accessUrl = study.getAccessUrl();
         this.creatorEmail = study.getAccount().getEmail();
     }
 }

@@ -17,8 +17,6 @@ public class AccountDto {
 
     private String introduce;
 
-    private Long categoryId;
-
     private List<String> roles;
 
     private String refreshToken;
@@ -29,7 +27,6 @@ public class AccountDto {
         this.email = email;
         this.image = image;
         this.introduce = introduce;
-        this.categoryId = categoryId;
         this.roles = roles;
         this.refreshToken = refreshToken;
     }

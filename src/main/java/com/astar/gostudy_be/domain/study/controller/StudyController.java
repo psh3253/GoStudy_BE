@@ -30,6 +30,11 @@ public class StudyController {
             return studyService.findAllStudiesByCategoryId(categoryId);
     }
 
+    @GetMapping("/api/v1/my-studies")
+    public List<StudyListDto> myStudies(@CurrentUser Account account) {
+        return studyService.findAllStudiesByAccount(account);
+    }
+
     @PostMapping("/api/v1/studies")
     public Long create(@ModelAttribute StudyCreateDto studyCreateDto, @CurrentUser Account account) {
         return studyService.createStudy(studyCreateDto, account);
@@ -43,6 +48,11 @@ public class StudyController {
     @GetMapping("/api/v1/studies/{id}")
     public StudyDto study(@PathVariable Long id) {
         return studyService.findStudy(id);
+    }
+
+    @GetMapping("/api/v1/access-url/{accessUrl}")
+    public Long studyId(@PathVariable String accessUrl) {
+        return studyService.findStudyId(accessUrl);
     }
 
     @DeleteMapping("/api/v1/studies/{id}")
@@ -64,6 +74,16 @@ public class StudyController {
     @PostMapping("/api/v1/studies/{id}/participate")
     public Long participate(@PathVariable Long id, @RequestBody Map<String, String> data, @CurrentUser Account account) {
         return studyService.participateStudy(id, data.get("message"), account);
+    }
+
+    @PostMapping("/api/v1/studies/{id}/withdraw")
+    public Long withdraw(@PathVariable Long id, @CurrentUser Account account) {
+        return studyService.withdrawStudy(id, account);
+    }
+
+    @PostMapping("/api/v1/studies/{id}/cancel")
+    public Long cancel(@PathVariable Long id, @CurrentUser Account account) {
+        return studyService.cancelApplicationStudy(id, account);
     }
 
     @ResponseBody

@@ -70,6 +70,10 @@ public class Study extends BaseTimeEntity {
     @Column
     private String introduce;
 
+    @Column
+    @NotNull
+    private String accessUrl;
+
     @JoinColumn(name = "creator_id")
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -77,7 +81,7 @@ public class Study extends BaseTimeEntity {
     private Account account;
 
     @Builder
-    public Study(Long id, String name, StudyImage image, Category category, StudyType type, String location, Integer currentNumber, Integer recruitmentNumber, Visibility visibility, JoinType joinType, Boolean isRecruiting, String introduce, Account account) {
+    public Study(Long id, String name, StudyImage image, Category category, StudyType type, String location, Integer currentNumber, Integer recruitmentNumber, Visibility visibility, JoinType joinType, Boolean isRecruiting, String introduce, String accessUrl, Account account) {
         this.id = id;
         this.name = name;
         this.image = image;
@@ -90,6 +94,7 @@ public class Study extends BaseTimeEntity {
         this.joinType = joinType;
         this.isRecruiting = isRecruiting;
         this.introduce = introduce;
+        this.accessUrl = accessUrl;
         this.account = account;
     }
 
