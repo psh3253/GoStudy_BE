@@ -14,8 +14,8 @@ VALUES ('파일명 1');
 INSERT INTO study (name, image_id, category_id, type, location, recruitment_number, visibility, join_type, introduce,
                    access_url, creator_id)
 VALUES ('스터디명 1',
-        (SELECT LAST_INSERT_ID() FROM study_image),
-        (SELECT LAST_INSERT_ID() FROM category),
+        1,
+        1,
         'OFFLINE',
         '장소 1',
         '10',
@@ -26,14 +26,13 @@ VALUES ('스터디명 1',
         (SELECT LAST_INSERT_ID() FROM account));
 
 INSERT INTO participant (user_id, study_id)
-VALUES ((SELECT LAST_INSERT_ID() FROM account),
-        (SELECT LAST_INSERT_ID() FROM study));
+VALUES (1, 1);
 
 INSERT INTO study (name, image_id, category_id, type, location, recruitment_number, visibility, join_type, introduce,
                    access_url, creator_id)
 VALUES ('스터디명 2',
-        (SELECT LAST_INSERT_ID() FROM study_image),
-        (SELECT LAST_INSERT_ID() FROM category),
+        1,
+        1,
         'OFFLINE',
         '장소 2',
         '10',
@@ -51,6 +50,4 @@ VALUES ('이메일 2',
         '리프레쉬 토큰 2');
 
 INSERT INTO applicant (study_id, user_id, message)
-VALUES ((SELECT LAST_INSERT_ID() FROM study),
-        (SELECT LAST_INSERT_ID() FROM account),
-        '메시지 2');
+VALUES (2, 2, '메시지 2');

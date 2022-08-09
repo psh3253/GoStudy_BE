@@ -84,10 +84,10 @@ public class StudyService {
             filename = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")) + '.' + extension;
 
             try {
-                File imageFile = new File("C://uploads/images/" + filename);
+                File imageFile = new File("C://uploads/study/images/" + filename);
                 studyCreateDto.getImage().transferTo(imageFile);
 
-                File thumbnailImageFile = new File("C://uploads/thumbnail_images/" + "thumbnail_" + filename);
+                File thumbnailImageFile = new File("C://uploads/study/thumbnail_images/" + "thumbnail_" + filename);
                 Image image = ImageIO.read(imageFile);
                 Image resizedImage = image.getScaledInstance(400, 300, Image.SCALE_SMOOTH);
                 BufferedImage newImage = new BufferedImage(400, 300, BufferedImage.TYPE_INT_RGB);

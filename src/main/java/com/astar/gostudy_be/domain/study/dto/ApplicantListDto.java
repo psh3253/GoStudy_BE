@@ -26,6 +26,7 @@ public class ApplicantListDto {
         this.message = applicant.getMessage();
         this.email = applicant.getAccount().getEmail();
         this.nickname = applicant.getAccount().getNickname();
+        this.image = applicant.getAccount().getImage();
         this.studyId = applicant.getStudy().getId();
     }
 }

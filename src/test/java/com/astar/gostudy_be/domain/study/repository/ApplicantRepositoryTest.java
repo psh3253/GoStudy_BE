@@ -84,29 +84,39 @@ class ApplicantRepositoryTest {
         // 신청자가 존재하지 않는 경우
         {
             // given
+            Long studyId = 1L;
+            String email = "이메일 1";
 
             // when
+            Applicant applicant = applicantRepository.findByStudyIdAndAccountEmail(studyId, email).orElse(null);
 
             // then
-
+            assertThat(applicant).isEqualTo(null);
         }
         // 스터디가 존재하지 않는 경우
         {
             // given
+            Long studyId = -1L;
+            String email = "이메일 2";
 
             // when
+            Applicant applicant = applicantRepository.findByStudyIdAndAccountEmail(studyId, email).orElse(null);
 
             // then
+            assertThat(applicant).isEqualTo(null);
 
         }
         // 사용자가 존재하지 않는 경우
         {
             // given
+            Long studyId = 2L;
+            String email = "잘못된 이메일";
 
             // when
+            Applicant applicant = applicantRepository.findByStudyIdAndAccountEmail(studyId, email).orElse(null);
 
             // then
-
+            assertThat(applicant).isEqualTo(null);
         }
     }
 }

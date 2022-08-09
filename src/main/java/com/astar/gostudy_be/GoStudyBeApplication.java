@@ -17,14 +17,13 @@ public class GoStudyBeApplication {
     }
 
     public static void createUploadsDirectory() {
-        File uploadDirectory = new File("C://uploads");
-        if (!uploadDirectory.exists())
-            uploadDirectory.mkdir();
-        File imageDirectory = new File("C://uploads/images");
-        if (!imageDirectory.exists())
-            imageDirectory.mkdir();
-        File thumbnailImageDirectory = new File("C://uploads/thumbnail_images");
-        if(!thumbnailImageDirectory.exists())
-            thumbnailImageDirectory.mkdir();
+        File studyImageDirectory = new File("C://uploads/study/images");
+        studyImageDirectory.mkdirs();
+        File studyThumbnailImageDirectory = new File("C://uploads/study/thumbnail_images");
+        studyThumbnailImageDirectory.mkdirs();
+        File profileImageDirectory = new File("C://uploads/profile/images");
+        profileImageDirectory.mkdirs();
+        File profileThumbnailImageDirectory = new File("C://uploads/profile/thumbnail_images");
+        profileThumbnailImageDirectory.mkdirs();
     }
 }

@@ -72,7 +72,7 @@ public class TokenService {
     @Transactional
     public void saveRefreshToken(String token, String email) {
         Account account = accountRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
-        account.update(null, null, null, null, null, token);
+        account.update(null, null, null, null,  null, token);
         accountRepository.save(account);
     }
 

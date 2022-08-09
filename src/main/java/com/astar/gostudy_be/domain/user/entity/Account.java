@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +21,8 @@ import java.util.stream.Collectors;
 
 @Entity
 @Getter
+@DynamicUpdate
+@DynamicInsert
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -51,9 +55,11 @@ public class Account extends BaseTimeEntity{
     @Column
     private String refreshToken;
 
-    public Account update(String nickname, String image, String introduce, Category category, List<String> roles, String refreshToken) {
+    public Account update(String nickname, String password, String image, String introduce, List<String> roles, String refreshToken) {
         if(nickname != null)
             this.nickname = nickname;
+        if(password != null)
+            this.password = password;
         if(image != null)
             this.image = image;
         if(introduce != null)
