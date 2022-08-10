@@ -47,12 +47,12 @@ public class StudyController {
 
     @GetMapping("/api/v1/studies/{id}")
     public StudyDto study(@PathVariable Long id) {
-        return studyService.findStudy(id);
+        return studyService.findStudyById(id);
     }
 
     @GetMapping("/api/v1/access-url/{accessUrl}")
     public Long studyId(@PathVariable String accessUrl) {
-        return studyService.findStudyId(accessUrl);
+        return studyService.findStudyIdByAccessUrl(accessUrl);
     }
 
     @DeleteMapping("/api/v1/studies/{id}")
@@ -71,7 +71,7 @@ public class StudyController {
         return studyService.closeStudy(id, account);
     }
 
-    @PostMapping("/api/v1/studies/{id}/participate")
+    @PostMapping("/api/v1/studies/{id}/participants")
     public Long participate(@PathVariable Long id, @RequestBody Map<String, String> data, @CurrentUser Account account) {
         return studyService.participateStudy(id, data.get("message"), account);
     }

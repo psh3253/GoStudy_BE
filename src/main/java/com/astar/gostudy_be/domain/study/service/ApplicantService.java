@@ -35,7 +35,10 @@ public class ApplicantService {
     public Long acceptParticipation(Long applicantId, Account account) {
         Applicant applicant = applicantRepository.findById(applicantId).orElseThrow(() -> new IllegalArgumentException("신청자가 존재하지 않습니다."));
         if (!Objects.equals(applicant.getStudy().getAccount().getEmail(), account.getEmail())) {
-            throw new IllegalArgumentException("사용자가 스터디의 소유자랑 일치하지 않습니다.");
+            throw new RuntimeException("사용자가 스터디의 소유자랑 일치하지 않습니다.");
+        }
+        if(applicant.getStudy().getCurrentNumber() >= applicant.getStudy().getRecruitmentNumber()) {
+            throw new RuntimeException("모집 인원을 초과할 수 없습니다.");
         }
         applicantRepository.delete(applicant);
 
@@ -53,7 +56,7 @@ public class ApplicantService {
     public Long deleteApplicant(Long applicantId, Account account) {
         Applicant applicant = applicantRepository.findById(applicantId).orElseThrow(() -> new IllegalArgumentException("신청자가 존재하지 않습니다."));
         if (!Objects.equals(applicant.getStudy().getAccount().getEmail(), account.getEmail())) {
-            throw new IllegalArgumentException("사용자가 스터디의 소유자랑 일치하지 않습니다.");
+            throw new RuntimeException("사용자가 스터디의 소유자랑 일치하지 않습니다.");
         }
         applicantRepository.delete(applicant);
         return applicant.getId();

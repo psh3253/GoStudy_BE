@@ -22,8 +22,8 @@ public class ParticipantController {
         return participantService.findAllParticipantsByStudyId(id);
     }
 
-    @DeleteMapping("/api/v1/participants/{id}")
-    public Long delete(@PathVariable Long id, @CurrentUser Account account) {
-        return participantService.deleteParticipant(id, account);
+    @DeleteMapping("/api/v1/studies/{sid}/participants/{pid}")
+    public Long delete(@PathVariable Long sid, @PathVariable Long pid, @CurrentUser Account account) {
+        return participantService.deleteParticipant(pid, account);
     }
 }

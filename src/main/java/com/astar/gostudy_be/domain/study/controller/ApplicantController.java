@@ -19,13 +19,13 @@ public class ApplicantController {
         return applicantService.findAllApplicantsByStudyId(id);
     }
 
-    @PostMapping("/api/v1/applicants/{id}")
-    public Long accept(@PathVariable Long id, @CurrentUser Account account) {
-        return applicantService.acceptParticipation(id, account);
+    @PostMapping("/api/v1/studies/{sid}/applicants/{aid}")
+    public Long accept(@PathVariable Long sid, @PathVariable Long aid, @CurrentUser Account account) {
+        return applicantService.acceptParticipation(aid, account);
     }
 
-    @DeleteMapping("/api/v1/applicants/{id}")
-    public Long delete(@PathVariable Long id, @CurrentUser Account account) {
-        return applicantService.deleteApplicant(id, account);
+    @DeleteMapping("/api/v1/studies/{sid}/applicants/{aid}")
+    public Long delete(@PathVariable Long sid, @PathVariable Long aid, @CurrentUser Account account) {
+        return applicantService.deleteApplicant(aid, account);
     }
 }

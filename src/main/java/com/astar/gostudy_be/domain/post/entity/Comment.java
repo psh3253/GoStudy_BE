@@ -1,4 +1,4 @@
-package com.astar.gostudy_be.domain.schedule.entity;
+package com.astar.gostudy_be.domain.post.entity;
 
 import com.astar.gostudy_be.domain.BaseTimeEntity;
 import com.astar.gostudy_be.domain.user.entity.Account;
@@ -10,39 +10,35 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor
-public class Schedule extends BaseTimeEntity {
+public class Comment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
-    @NotNull
-    private LocalDateTime dateTime;
-
-    @Column(columnDefinition = "TEXT")
-    @NotNull
     private String content;
 
-    @Column
+    @JoinColumn(name = "post_id")
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
-    private String location;
+    private Post post;
 
     @JoinColumn(name = "creator_id")
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotNull
     private Account account;
 
     @Builder
-    public Schedule(LocalDateTime dateTime, String content, String location, Account account) {
-        this.dateTime = dateTime;
+    public Comment(String content, Post post, Account account) {
         this.content = content;
-        this.location = location;
+        this.post = post;
         this.account = account;
     }
 }

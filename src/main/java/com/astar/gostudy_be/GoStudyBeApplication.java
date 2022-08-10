@@ -25,5 +25,9 @@ public class GoStudyBeApplication {
         profileImageDirectory.mkdirs();
         File profileThumbnailImageDirectory = new File("C://uploads/profile/thumbnail_images");
         profileThumbnailImageDirectory.mkdirs();
+        File postImageDirectory = new File("C://uploads/post/images");
+        postImageDirectory.mkdirs();
+        File postThumbnailImageDirectory = new File("C://uploads/post/thumbnail_images");
+        postThumbnailImageDirectory.mkdirs();
     }
 }

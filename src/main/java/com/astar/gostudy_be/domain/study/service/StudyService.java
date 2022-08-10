@@ -65,13 +65,13 @@ public class StudyService {
     }
 
     @Transactional(readOnly = true)
-    public StudyDto findStudy(Long studyId) {
+    public StudyDto findStudyById(Long studyId) {
         Study study = studyRepository.findById(studyId).orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
         return new StudyDto(study);
     }
 
     @Transactional(readOnly = true)
-    public Long findStudyId(String accessUrl) {
+    public Long findStudyIdByAccessUrl(String accessUrl) {
         Study study = studyRepository.findStudyByAccessUrl(accessUrl).orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
         return study.getId();
     }
@@ -132,9 +132,9 @@ public class StudyService {
         Study study = studyRepository.findById(studyId).orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
         Category category = categoryRepository.findById(studyUpdateDto.getCategoryId()).orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다."));
         if (!Objects.equals(studyUpdateDto.getId(), studyId)) {
-            throw new IllegalArgumentException("스터디 번호가 일치하지 않습니다.");
+            throw new RuntimeException("스터디 번호가 일치하지 않습니다.");
         } else if (!Objects.equals(study.getAccount().getEmail(), account.getEmail())) {
-            throw new IllegalArgumentException("사용자가 스터디의 소유자랑 일치하지 않습니다.");
+            throw new RuntimeException("사용자가 스터디의 소유자랑 일치하지 않습니다.");
         }
         return studyRepository.save(study.update(studyUpdateDto.toEntity(category))).getId();
     }
@@ -143,7 +143,7 @@ public class StudyService {
     public void deleteStudy(Long studyId, Account account) {
         Study study = studyRepository.findById(studyId).orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
         if (!Objects.equals(study.getAccount().getEmail(), account.getEmail())) {
-            throw new IllegalArgumentException("사용자가 스터디의 소유자랑 일치하지 않습니다.");
+            throw new RuntimeException("사용자가 스터디의 소유자랑 일치하지 않습니다.");
         }
         studyRepository.delete(study);
     }
@@ -152,7 +152,7 @@ public class StudyService {
     public Long closeStudy(Long studyId, Account account) {
         Study study = studyRepository.findById(studyId).orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
         if (!Objects.equals(study.getAccount().getEmail(), account.getEmail())) {
-            throw new IllegalArgumentException("사용자가 스터디의 소유자랑 일치하지 않습니다.");
+            throw new RuntimeException("사용자가 스터디의 소유자랑 일치하지 않습니다.");
         }
         return studyRepository.save(study.update(Study.builder().isRecruiting(false).build())).getId();
     }

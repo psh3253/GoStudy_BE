@@ -34,7 +34,7 @@ public class ParticipantService {
     public Long deleteParticipant(Long participantId, Account account) {
         Participant participant = participantRepository.findById(participantId).orElseThrow(() -> new IllegalArgumentException("참석자가 존재하지 않습니다."));
         if(!Objects.equals(participant.getStudy().getAccount().getEmail(), account.getEmail())) {
-            throw new IllegalArgumentException("사용자가 스터디의 소유자랑 일치하지 않습니다.");
+            throw new RuntimeException("사용자가 스터디의 소유자랑 일치하지 않습니다.");
         }
         participantRepository.delete(participant);
         Study study = participant.getStudy();

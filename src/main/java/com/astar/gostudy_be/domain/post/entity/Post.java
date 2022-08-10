@@ -7,6 +7,7 @@ import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -38,6 +39,11 @@ public class Post extends BaseTimeEntity {
     @Column
     private String image;
 
+    @Column
+    @NotNull
+    @ColumnDefault("0")
+    private Long commentCount;
+
     @JoinColumn(name = "creator_id")
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -45,11 +51,12 @@ public class Post extends BaseTimeEntity {
     private Account account;
 
     @Builder
-    public Post(Study study, String title, String content, String image, Account account) {
+    public Post(Study study, String title, String content, String image, Long commentCount, Account account) {
         this.study = study;
         this.title = title;
         this.content = content;
         this.image = image;
+        this.commentCount = commentCount;
         this.account = account;
     }
 }
