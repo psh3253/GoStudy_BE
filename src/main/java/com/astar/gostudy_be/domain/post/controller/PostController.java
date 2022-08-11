@@ -4,6 +4,7 @@ import com.astar.gostudy_be.annotation.CurrentUser;
 import com.astar.gostudy_be.domain.post.dto.PostCreateDto;
 import com.astar.gostudy_be.domain.post.dto.PostDto;
 import com.astar.gostudy_be.domain.post.dto.PostListDto;
+import com.astar.gostudy_be.domain.post.dto.PostUpdateDto;
 import com.astar.gostudy_be.domain.post.service.PostService;
 import com.astar.gostudy_be.domain.user.entity.Account;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,11 @@ public class PostController {
     @PostMapping("/api/v1/studies/{id}/posts")
     public Long create(@ModelAttribute PostCreateDto postCreateDto, @PathVariable Long id, @CurrentUser Account account) {
         return postService.createPost(postCreateDto, id, account);
+    }
+
+    @PatchMapping("/api/v1/studies/{sid}/posts/{pid}")
+    public Long update(@RequestBody PostUpdateDto postUpdateDto, @PathVariable Long sid, @PathVariable Long pid, @CurrentUser Account account) {
+        return postService.updatePost(postUpdateDto, pid, account);
     }
 
     @DeleteMapping("/api/v1/studies/{sid}/posts/{pid}")

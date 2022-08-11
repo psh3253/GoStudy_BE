@@ -1,5 +1,6 @@
 package com.astar.gostudy_be.security.handler;
 
+import com.astar.gostudy_be.config.Config;
 import com.astar.gostudy_be.domain.user.dto.AccountDto;
 import com.astar.gostudy_be.security.UserRequestMapper;
 import com.astar.gostudy_be.security.dto.Token;
@@ -44,26 +45,26 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         Cookie accessTokenCookie = new Cookie("Auth", token.getAccessToken());
         accessTokenCookie.setPath("/");
         accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setDomain("localhost");
+        accessTokenCookie.setDomain(Config.WEB_DOMAIN);
         accessTokenCookie.setMaxAge(60 * 60 * 6);
         Cookie refreshTokenCookie = new Cookie("Refresh", token.getRefreshToken());
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setDomain("localhost");
+        refreshTokenCookie.setDomain(Config.WEB_DOMAIN);
         refreshTokenCookie.setMaxAge(60 * 60 * 24 * 30);
         Cookie isLoginCookie = new Cookie("IsLogin", "true");
         isLoginCookie.setPath("/");
-        isLoginCookie.setDomain("localhost");
+        isLoginCookie.setDomain(Config.WEB_DOMAIN);
         isLoginCookie.setMaxAge(60 * 60 * 6);
         Cookie userEmailCookie = new Cookie("UserEmail", tokenService.getUid(token.getAccessToken()));
         userEmailCookie.setPath("/");
-        userEmailCookie.setDomain("localhost");
+        userEmailCookie.setDomain(Config.WEB_DOMAIN);
         userEmailCookie.setMaxAge(60 * 60 * 6);
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
         response.addCookie(isLoginCookie);
         response.addCookie(userEmailCookie);
-        response.sendRedirect("http://localhost:8080/");
+        response.sendRedirect(Config.WEB_URL);
     }
 }

@@ -7,14 +7,15 @@ import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 
 @Entity
 @Getter
+@DynamicInsert
+@DynamicUpdate
 @NoArgsConstructor
 public class Post extends BaseTimeEntity {
 
@@ -58,5 +59,17 @@ public class Post extends BaseTimeEntity {
         this.image = image;
         this.commentCount = commentCount;
         this.account = account;
+    }
+
+    public Post update(Post post) {
+        if(post.getId() != null)
+            this.id = post.getId();
+        if(post.getContent() != null)
+            this.content = post.getContent();
+        if(post.getTitle() != null)
+            this.title = post.getTitle();
+        if(post.getContent() != null)
+            this.commentCount = post.getCommentCount();
+        return this;
     }
 }

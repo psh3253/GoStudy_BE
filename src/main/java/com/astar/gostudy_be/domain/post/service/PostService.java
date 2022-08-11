@@ -3,9 +3,12 @@ package com.astar.gostudy_be.domain.post.service;
 import com.astar.gostudy_be.domain.post.dto.PostCreateDto;
 import com.astar.gostudy_be.domain.post.dto.PostDto;
 import com.astar.gostudy_be.domain.post.dto.PostListDto;
+import com.astar.gostudy_be.domain.post.dto.PostUpdateDto;
 import com.astar.gostudy_be.domain.post.entity.Post;
 import com.astar.gostudy_be.domain.post.repository.PostRepository;
+import com.astar.gostudy_be.domain.study.entity.Participant;
 import com.astar.gostudy_be.domain.study.entity.Study;
+import com.astar.gostudy_be.domain.study.repository.ParticipantRepository;
 import com.astar.gostudy_be.domain.study.repository.StudyRepository;
 import com.astar.gostudy_be.domain.user.entity.Account;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +35,8 @@ public class PostService {
 
     private final StudyRepository studyRepository;
 
+    private final ParticipantRepository participantRepository;
+
     @Transactional(readOnly = true)
     public List<PostListDto> findAllPostsByStudyId(Long studyId) {
         return postRepository.findAllByStudyId(studyId).stream()
@@ -45,9 +50,10 @@ public class PostService {
     }
 
     @Transactional
-    public Long createPost(PostCreateDto postCreateDto, Long studyId, Account account)  {
+    public Long createPost(PostCreateDto postCreateDto, Long studyId, Account account) {
         String filename = null;
         Study study = studyRepository.findById(studyId).orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
+        Participant participant = participantRepository.findByStudyIdAndAccountEmail(studyId, account.getEmail()).orElseThrow(() -> new IllegalArgumentException("사용자가 스터디에 소속되어 있지 않습니다."));
         if (postCreateDto.getImage() != null) {
             String extension = StringUtils.getFilenameExtension(postCreateDto.getImage().getOriginalFilename());
             filename = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")) + '.' + extension;
@@ -73,9 +79,20 @@ public class PostService {
     }
 
     @Transactional
+    public Long updatePost(PostUpdateDto postUpdateDto, Long postId, Account account) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        if (!Objects.equals(post.getId(), postId)) {
+            throw new RuntimeException("게시글 번호가 일치하지 않습니다.");
+        } else if (!Objects.equals(post.getAccount().getEmail(), account.getEmail())) {
+            throw new RuntimeException("사용자가 게시글의 소유자랑 일치하지 않습니다.");
+        }
+        return postRepository.save(post.update(postUpdateDto.toEntity())).getId();
+    }
+
+    @Transactional
     public Long deletePost(Long postId, Account account) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
-        if(!Objects.equals(post.getAccount().getEmail(), account.getEmail())) {
+        if (!Objects.equals(post.getAccount().getEmail(), account.getEmail())) {
             throw new RuntimeException("사용자가 게시글의 소유자랑 일치하지 않습니다.");
         }
         postRepository.delete(post);

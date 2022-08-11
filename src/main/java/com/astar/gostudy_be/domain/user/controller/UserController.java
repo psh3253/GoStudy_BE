@@ -1,6 +1,7 @@
 package com.astar.gostudy_be.domain.user.controller;
 
 import com.astar.gostudy_be.annotation.CurrentUser;
+import com.astar.gostudy_be.config.Config;
 import com.astar.gostudy_be.domain.user.dto.ProfileDto;
 import com.astar.gostudy_be.domain.user.dto.ProfileUpdateDto;
 import com.astar.gostudy_be.domain.user.entity.Account;
@@ -59,13 +60,13 @@ public class UserController {
         tokenService.saveRefreshToken(token.getRefreshToken(), user.get("email"));
 
         ResponseCookie accessTokenCookie = ResponseCookie.from("Auth", token.getAccessToken())
-                .path("/").httpOnly(true).domain("localhost").maxAge(60L * 60L * 6L).build();
+                .path("/").httpOnly(true).domain(Config.WEB_DOMAIN).maxAge(60L * 60L * 6L).build();
         ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh", token.getRefreshToken())
-                .path("/").httpOnly(true).domain("localhost").maxAge(60L * 60L * 24L * 30L).build();
+                .path("/").httpOnly(true).domain(Config.WEB_DOMAIN).maxAge(60L * 60L * 24L * 30L).build();
         ResponseCookie isLoginCookie = ResponseCookie.from("IsLogin", "true")
-                .path("/").domain("localhost").maxAge(60L * 60L * 6L).build();
+                .path("/").domain(Config.WEB_DOMAIN).maxAge(60L * 60L * 6L).build();
         ResponseCookie userEmailCookie = ResponseCookie.from("UserEmail", user.get("email"))
-                .path("/").domain("localhost").maxAge(60L * 60L * 6L).build();
+                .path("/").domain(Config.WEB_DOMAIN).maxAge(60L * 60L * 6L).build();
 
         return ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), refreshTokenCookie.toString(), isLoginCookie.toString(), userEmailCookie.toString())

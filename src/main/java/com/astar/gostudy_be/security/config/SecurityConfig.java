@@ -1,5 +1,6 @@
 package com.astar.gostudy_be.security.config;
 
+import com.astar.gostudy_be.config.Config;
 import com.astar.gostudy_be.domain.user.service.UserService;
 import com.astar.gostudy_be.security.filter.JwtAuthFilter;
 import com.astar.gostudy_be.security.handler.CustomLogoutSuccessHandler;
@@ -69,7 +70,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:8080"));
+        configuration.setAllowedOrigins(Collections.singletonList(Config.WEB_URL));
         configuration.setAllowedMethods(Collections.singletonList("*"));
         configuration.setAllowedHeaders(Collections.singletonList("*"));
         configuration.setAllowCredentials(true);
