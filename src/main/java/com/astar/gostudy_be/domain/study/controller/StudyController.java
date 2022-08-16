@@ -23,11 +23,8 @@ public class StudyController {
     private final StudyService studyService;
 
     @GetMapping("/api/v1/studies")
-    public List<StudyListDto> studies(@RequestParam(value = "category-id", required = false, defaultValue = "0") Long categoryId) {
-        if (categoryId == 0)
-            return studyService.findAllStudies();
-        else
-            return studyService.findAllStudiesByCategoryId(categoryId);
+    public List<StudyListDto> studies() {
+        return studyService.findAllStudies();
     }
 
     @GetMapping("/api/v1/my-studies")

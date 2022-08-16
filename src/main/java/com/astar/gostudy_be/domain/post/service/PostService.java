@@ -95,6 +95,8 @@ public class PostService {
         if (!Objects.equals(post.getAccount().getEmail(), account.getEmail())) {
             throw new RuntimeException("사용자가 게시글의 소유자랑 일치하지 않습니다.");
         }
+        new File("C://uploads/post/images/" + post.getImage()).delete();
+        new File("C://uploads/post/thumbnail_images/thumbnail_" + post.getImage()).delete();
         postRepository.delete(post);
         return post.getId();
     }

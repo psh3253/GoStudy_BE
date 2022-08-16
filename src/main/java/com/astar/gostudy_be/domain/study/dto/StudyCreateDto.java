@@ -4,11 +4,13 @@ import com.astar.gostudy_be.domain.study.entity.*;
 import com.astar.gostudy_be.domain.user.entity.Account;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -35,10 +37,10 @@ public class StudyCreateDto {
 
     private String introduce;
 
-    public Study toEntity(Category category, Account account, StudyImage studyImage, String accessUrl) {
+    public Study toEntity(Category category, Account account, String image, String accessUrl) {
         return Study.builder()
                 .name(name)
-                .image(studyImage)
+                .image(image)
                 .category(category)
                 .location(location)
                 .type(type)

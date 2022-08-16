@@ -30,8 +30,6 @@ public class StudyService {
 
     private final CategoryRepository categoryRepository;
 
-    private final StudyImageRepository studyImageRepository;
-
     private final ParticipantRepository participantRepository;
 
     private final ApplicantRepository applicantRepository;
@@ -39,13 +37,6 @@ public class StudyService {
     @Transactional(readOnly = true)
     public List<StudyListDto> findAllStudies() {
         return studyRepository.findAllByIsRecruitingIsTrueAndVisibilityEquals(Visibility.PUBLIC).stream()
-                .map(StudyListDto::new)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<StudyListDto> findAllStudiesByCategoryId(Long categoryId) {
-        return studyRepository.findAllByCategoryId(categoryId).stream()
                 .map(StudyListDto::new)
                 .collect(Collectors.toList());
     }
@@ -101,10 +92,6 @@ public class StudyService {
         } else {
             filename = "default.jpg";
         }
-        StudyImage studyImage = StudyImage.builder()
-                .filename(filename)
-                .build();
-        StudyImage savedStudyImage = studyImageRepository.save(studyImage);
 
         Category category = categoryRepository.findById(studyCreateDto.getCategoryId()).orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다."));
 
@@ -117,7 +104,7 @@ public class StudyService {
                     .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                     .toString();
         } while (studyRepository.countByAccessUrl(randomString) != 0);
-        Study savedStudy = studyRepository.save(studyCreateDto.toEntity(category, account, savedStudyImage, randomString));
+        Study savedStudy = studyRepository.save(studyCreateDto.toEntity(category, account, filename, randomString));
 
         Participant creator = Participant.builder()
                 .study(savedStudy)
@@ -145,6 +132,10 @@ public class StudyService {
         if (!Objects.equals(study.getAccount().getEmail(), account.getEmail())) {
             throw new RuntimeException("사용자가 스터디의 소유자랑 일치하지 않습니다.");
         }
+        if (!Objects.equals(study.getImage(), "default.jpg")) {
+            new File("C://uploads/study/images/" + study.getImage()).delete();
+            new File("C://uploads/study/thumbnail_images/thumbnail_" + study.getImage()).delete();
+        }
         studyRepository.delete(study);
     }
 
@@ -160,7 +151,7 @@ public class StudyService {
     @Transactional
     public Long participateStudy(Long studyId, String message, Account account) {
         Study study = studyRepository.findById(studyId).orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
-        if(study.getCurrentNumber() >= study.getRecruitmentNumber())
+        if (study.getCurrentNumber() >= study.getRecruitmentNumber())
             throw new RuntimeException("모집 인원을 초과할 수 없습니다.");
         if (study.getJoinType().name().equals("FREE")) {
             Participant participant = Participant.builder()

@@ -31,7 +31,7 @@ public class StudyListDto {
     public StudyListDto(Study study) {
         this.id = study.getId();
         this.name = study.getName();
-        this.filename = study.getImage().getFilename();
+        this.filename = study.getImage();
         this.categoryName = study.getCategory().getName();
         this.type = study.getType();
         this.location = study.getLocation();

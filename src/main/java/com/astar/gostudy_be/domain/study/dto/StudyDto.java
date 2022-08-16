@@ -42,7 +42,7 @@ public class StudyDto {
     public StudyDto(Study study) {
         this.id = study.getId();
         this.name = study.getName();
-        this.filename = study.getImage().getFilename();
+        this.filename = study.getImage();
         this.categoryId = study.getCategory().getId();
         this.categoryName = study.getCategory().getName();
         this.type = study.getType();

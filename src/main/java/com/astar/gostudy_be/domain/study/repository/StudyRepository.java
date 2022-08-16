@@ -10,7 +10,6 @@ import java.util.Optional;
 
 public interface StudyRepository extends JpaRepository<Study, Long> {
     List<Study> findAllByIsRecruitingIsTrueAndVisibilityEquals(Visibility visibility);
-    List<Study> findAllByCategoryId(Long categoryId);
 
     Long countByAccessUrl(String accessUrl);
 

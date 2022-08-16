@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +47,10 @@ public class UserService implements UserDetailsService {
     public Long updateProfile(ProfileUpdateDto profileUpdateDto, Account account) {
         String filename = null;
         if(profileUpdateDto.getImage() != null) {
+            if (!Objects.equals(account.getImage(), "default.png") || !account.getImage().contains("http")) {
+                new File("C://uploads/profile/images/" + account.getImage()).delete();
+                new File("C://uploads/profile/thumbnail_images/thumbnail_" + account.getImage()).delete();
+            }
             String extension = StringUtils.getFilenameExtension(profileUpdateDto.getImage().getOriginalFilename());
             filename = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")) + '.' + extension;
 
