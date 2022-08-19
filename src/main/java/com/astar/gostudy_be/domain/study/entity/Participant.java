@@ -33,7 +33,8 @@ public class Participant extends BaseTimeEntity {
     private Study study;
 
     @Builder
-    public Participant(Account account, Study study) {
+    public Participant(Long id, Account account, Study study) {
+        this.id = id;
         this.study = study;
         this.account = account;
     }

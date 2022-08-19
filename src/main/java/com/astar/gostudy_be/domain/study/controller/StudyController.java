@@ -34,6 +34,7 @@ public class StudyController {
 
     @PostMapping("/api/v1/studies")
     public Long create(@ModelAttribute StudyCreateDto studyCreateDto, @CurrentUser Account account) {
+        log.info(account.getEmail());
         return studyService.createStudy(studyCreateDto, account);
     }
 
@@ -54,8 +55,7 @@ public class StudyController {
 
     @DeleteMapping("/api/v1/studies/{id}")
     public Long delete(@PathVariable Long id, @CurrentUser Account account) {
-        studyService.deleteStudy(id, account);
-        return id;
+        return studyService.deleteStudy(id, account);
     }
 
     @GetMapping("/api/v1/categories")

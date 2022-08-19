@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.io.File;
 
-@EnableJpaAuditing
 @SpringBootApplication
 public class GoStudyBeApplication {
 

@@ -52,7 +52,8 @@ public class Post extends BaseTimeEntity {
     private Account account;
 
     @Builder
-    public Post(Study study, String title, String content, String image, Long commentCount, Account account) {
+    public Post(Long id, Study study, String title, String content, String image, Long commentCount, Account account) {
+        this.id = id;
         this.study = study;
         this.title = title;
         this.content = content;

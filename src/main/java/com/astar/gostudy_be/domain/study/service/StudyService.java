@@ -127,7 +127,7 @@ public class StudyService {
     }
 
     @Transactional
-    public void deleteStudy(Long studyId, Account account) {
+    public Long deleteStudy(Long studyId, Account account) {
         Study study = studyRepository.findById(studyId).orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
         if (!Objects.equals(study.getAccount().getEmail(), account.getEmail())) {
             throw new RuntimeException("사용자가 스터디의 소유자랑 일치하지 않습니다.");
@@ -137,6 +137,7 @@ public class StudyService {
             new File("C://uploads/study/thumbnail_images/thumbnail_" + study.getImage()).delete();
         }
         studyRepository.delete(study);
+        return study.getId();
     }
 
     @Transactional
@@ -161,7 +162,6 @@ public class StudyService {
             studyRepository.save(study.update(Study.builder()
                     .currentNumber(study.getCurrentNumber() + 1)
                     .build()));
-            log.info(study.getCurrentNumber().toString());
             return participantRepository.save(participant).getId();
         } else {
             Applicant applicantParticipant = Applicant.builder()

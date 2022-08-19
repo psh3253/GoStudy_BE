@@ -3,10 +3,12 @@ package com.astar.gostudy_be.domain.study.dto;
 import com.astar.gostudy_be.domain.study.entity.*;
 import com.astar.gostudy_be.domain.user.entity.Account;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class StudyUpdateDto {
 

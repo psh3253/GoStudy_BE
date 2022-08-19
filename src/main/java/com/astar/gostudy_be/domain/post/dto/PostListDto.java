@@ -26,7 +26,7 @@ public class PostListDto {
     private String creatorImage;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     public PostListDto(Post post) {
         this.id = post.getId();
@@ -36,6 +36,6 @@ public class PostListDto {
         this.creatorEmail = post.getAccount().getEmail();
         this.creatorNickname = post.getAccount().getNickname();
         this.creatorImage = post.getAccount().getImage();
-        this.created_at = post.getCreatedAt();
+        this.createdAt = post.getCreatedAt();
     }
 }
