@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -20,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.Objects;
 
 @Service
@@ -36,6 +38,36 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = accountRepository.findByEmail(username).orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
         return new AccountAdapter(account);
+    }
+
+    @Transactional
+    public Long join(String email, String password, String nickname, PasswordEncoder passwordEncoder) {
+        return accountRepository.save(Account.builder()
+                .email(email)
+                .image("thumbnail_default.png")
+                .password(passwordEncoder.encode(password))
+                .nickname(nickname)
+                .introduce("")
+                .roles(Collections.singletonList("ROLE_USER"))
+                .build()).getId();
+    }
+
+    @Transactional
+    public Account login(String email, String password, PasswordEncoder passwordEncoder) {
+        Account member = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
+        if (!passwordEncoder.matches(password, member.getPassword())) {
+            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+        }
+        return member;
+    }
+
+    @Transactional
+    public Long changePassword(String currentPassword, String newPassword, Account account, PasswordEncoder passwordEncoder) {
+        if (!passwordEncoder.matches(currentPassword, account.getPassword())) {
+            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+        }
+        return accountRepository.save(account.update(null, passwordEncoder.encode(newPassword), null, null, null, null)).getId();
     }
 
     @Transactional(readOnly = true)

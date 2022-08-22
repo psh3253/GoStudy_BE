@@ -10,9 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -28,6 +27,9 @@ class UserServiceTest {
 
     @Mock
     AccountRepository accountRepository;
+
+    @Mock
+    PasswordEncoder passwordEncoder;
 
     @Test
     void getAccount() {
@@ -99,6 +101,101 @@ class UserServiceTest {
         assertThat(accountAdapter.getAccount().getImage()).isEqualTo(image);
         assertThat(accountAdapter.getAccount().getIntroduce()).isEqualTo(introduce);
         assertThat(accountAdapter.getAccount().getRefreshToken()).isEqualTo(refreshToken);
+    }
+
+    @Test
+    void join() {
+        // given
+        Long id = 1L;
+        String email = "이메일 1";
+        String password = "비밀번호 1";
+        String nickname = "닉네임 1";
+
+        Account account = Account.builder()
+                .id(id)
+                .email(email)
+                .password(password)
+                .nickname(nickname)
+                .image("이미지 1")
+                .introduce("소개 1")
+                .refreshToken("리프레쉬 토큰 1")
+                .roles(Collections.singletonList("USER"))
+                .build();
+
+        when(passwordEncoder.encode(password)).thenReturn("인코딩 비밀번호 1");
+        when(accountRepository.save(any(Account.class))).thenReturn(account);
+
+        // when
+        Long accountId = userService.join(email, password, nickname, passwordEncoder);
+
+        // then
+        assertThat(accountId).isEqualTo(id);
+    }
+
+    @Test
+    void login() {
+        // given
+        Long id = 1L;
+        String email = "이메일 1";
+        String password = "인코딩 된 비밀번호 1";
+        String nickname = "닉네임 1";
+        String image = "이미지 1";
+        String introduce = "소개 1";
+        String refreshToken = "리프레쉬 토큰 1";
+
+        Account account = Account.builder()
+                .id(id)
+                .email(email)
+                .password(password)
+                .nickname(nickname)
+                .image(image)
+                .introduce(introduce)
+                .refreshToken(refreshToken)
+                .roles(Collections.singletonList("USER"))
+                .build();
+
+        when(passwordEncoder.matches(password, "인코딩 된 비밀번호 1")).thenReturn(true);
+        when(accountRepository.findByEmail(email)).thenReturn(Optional.ofNullable(account));
+
+        // when
+        Account loginedAccount = userService.login(email, password, passwordEncoder);
+
+        // then
+        assertThat(loginedAccount.getId()).isEqualTo(id);
+        assertThat(loginedAccount.getEmail()).isEqualTo(email);
+        assertThat(loginedAccount.getNickname()).isEqualTo(nickname);
+        assertThat(loginedAccount.getImage()).isEqualTo(image);
+        assertThat(loginedAccount.getPassword()).isEqualTo(password);
+        assertThat(loginedAccount.getIntroduce()).isEqualTo(introduce);
+        assertThat(loginedAccount.getRefreshToken()).isEqualTo(refreshToken);
+    }
+
+    @Test
+    void changePassword() {
+        // given
+        Long id = 1L;
+        String password = "인코딩 된 비밀번호 1";
+        String newPassword = "새 비밀번호 1";
+
+        Account account = Account.builder()
+                .id(id)
+                .email("이메일 1")
+                .password(password)
+                .nickname("닉네임 1")
+                .image("이미지 1")
+                .introduce("소개 1")
+                .refreshToken("리프레쉬 토큰 1")
+                .roles(Collections.singletonList("USER"))
+                .build();
+
+        when(accountRepository.save(any(Account.class))).thenReturn(account);
+        when(passwordEncoder.matches(password, "인코딩 된 비밀번호 1")).thenReturn(true);
+
+        // when
+        Long accountId = userService.changePassword(password, newPassword, account, passwordEncoder);
+
+        // then
+        assertThat(accountId).isEqualTo(id);
     }
 
     @Test

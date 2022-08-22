@@ -86,7 +86,7 @@ public class StudyController {
     @ResponseBody
     @GetMapping("/images/study/{filename}")
     public Resource showStudyImage(@PathVariable String filename) throws MalformedURLException {
-        File imageFile = new File("C://uploads/study/thumbnail_images/" + filename);
+        File imageFile = new File("C://uploads/study/thumbnail_images/thumbnail_" + filename);
         return new UrlResource("file:" + imageFile.getAbsolutePath());
     }
 }

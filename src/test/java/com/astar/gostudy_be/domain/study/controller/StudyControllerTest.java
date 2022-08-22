@@ -1,5 +1,6 @@
 package com.astar.gostudy_be.domain.study.controller;
 
+import com.astar.gostudy_be.domain.study.dto.CategoryListDto;
 import com.astar.gostudy_be.domain.study.dto.StudyDto;
 import com.astar.gostudy_be.domain.study.dto.StudyListDto;
 import com.astar.gostudy_be.domain.study.dto.StudyUpdateDto;
@@ -7,7 +8,6 @@ import com.astar.gostudy_be.domain.study.entity.*;
 import com.astar.gostudy_be.domain.study.service.StudyService;
 import com.astar.gostudy_be.domain.user.dto.AccountAdapter;
 import com.astar.gostudy_be.domain.user.entity.Account;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,12 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -314,55 +314,129 @@ class StudyControllerTest {
         // given
         Long studyId = 1L;
 
-        given(studyService.deleteStudy(studyId, loginAccount)).willReturn(studyId);
+        given(studyService.deleteStudy(eq(studyId), eq(loginAccount))).willReturn(studyId);
 
         // when & then
         mockMvc.perform(delete("/api/v1/studies/" + studyId)
-                .with(csrf())
-                .with(user(new AccountAdapter(loginAccount))))
+                        .with(csrf())
+                        .with(user(new AccountAdapter(loginAccount))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(studyId));
     }
 
+    @WithMockUser(roles = "USER")
     @Test
-    void categories() {
+    void categories() throws Exception {
         // given
+        Long id = 1L;
+        String name = "카테고리 1";
+        Category category = Category.builder()
+                .id(id)
+                .name(name)
+                .build();
+
+        List<CategoryListDto> categoryListDtos = new ArrayList<>();
+        categoryListDtos.add(new CategoryListDto(category));
+
+        given(studyService.findAllCategories()).willReturn(categoryListDtos);
 
         // when & then
+        mockMvc.perform(get("/api/v1/categories")
+                        .with(user(new AccountAdapter(loginAccount))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].id").value(id))
+                .andExpect(jsonPath("$.[0].name").value(name));
+    }
+
+    @WithMockUser(roles = "USER")
+    @Test
+    void close() throws Exception {
+        // given
+        Long id = 1L;
+        given(studyService.closeStudy(eq(id), eq(loginAccount))).willReturn(id);
+
+        // when & then
+        mockMvc.perform(post("/api/v1/studies/" + id + "/close")
+                        .with(csrf())
+                        .with(user(new AccountAdapter(loginAccount))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(id));
+    }
+
+    @WithMockUser(roles = "USER")
+    @Test
+    void participate() throws Exception {
+        // given
+        Long studyId = 1L;
+        Long id = 1L;
+        String message = "메시지 1";
+        class MessageDto implements Serializable {
+            final String message;
+
+            public MessageDto(String message) {
+                this.message = message;
+            }
+
+            public String getMessage() {
+                return message;
+            }
+        }
+        MessageDto messageObject = new MessageDto(message);
+
+        given(studyService.participateStudy(eq(studyId), eq(message), eq(loginAccount))).willReturn(id);
+
+        // when & then
+        mockMvc.perform(post("/api/v1/studies/" + studyId + "/participants")
+                        .contentType("application/json")
+                        .content(new ObjectMapper().writeValueAsString(messageObject))
+                        .with(csrf())
+                        .with(user(new AccountAdapter(loginAccount))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(id));
+    }
+
+    @WithMockUser(roles = "USER")
+    @Test
+    void withdraw() throws Exception {
+        // given
+        Long id = 1L;
+        Long studyId = 1L;
+
+        given(studyService.withdrawStudy(eq(studyId), eq(loginAccount))).willReturn(id);
+
+        // when & then
+        mockMvc.perform(post("/api/v1/studies/" + studyId + "/withdraw")
+                        .with(csrf())
+                        .with(user(new AccountAdapter(loginAccount))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(id));
+    }
+
+    @WithMockUser(roles = "USER")
+    @Test
+    void cancel() throws Exception {
+        // given
+        Long id = 1L;
+        Long studyId = 1L;
+
+        given(studyService.cancelApplicationStudy(eq(studyId), eq(loginAccount))).willReturn(id);
+
+        // when & then
+        mockMvc.perform(post("/api/v1/studies/" + studyId + "/cancel")
+                        .with(csrf())
+                        .with(user(new AccountAdapter(loginAccount))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(id));
     }
 
     @Test
-    void close() {
+    void showStudyImage() throws Exception {
         // given
+        String filename = "default.jpg";
 
         // when & then
-    }
-
-    @Test
-    void participate() {
-        // given
-
-        // when & then
-    }
-
-    @Test
-    void withdraw() {
-        // given
-
-        // when & then
-    }
-
-    @Test
-    void cancel() {
-        // given
-
-        // when & then
-    }
-
-    @Test
-    void showStudyImage() {
-        // given
-
-        // when & then
+        mockMvc.perform(get("/images/study/" + filename)
+                .with(user(new AccountAdapter(loginAccount))))
+                .andExpect(status().isOk());
     }
 }

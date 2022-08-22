@@ -30,31 +30,20 @@ import java.util.Map;
 @RestController
 public class UserController {
 
-    private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
-    private final AccountRepository accountRepository;
 
     private final UserService userService;
 
+    private final PasswordEncoder passwordEncoder;
+
     @PostMapping("/api/v1/join")
     public Long join(@RequestBody Map<String, String> user) {
-        return accountRepository.save(Account.builder()
-                .email(user.get("email"))
-                .image("thumbnail_default.png")
-                .password(passwordEncoder.encode(user.get("password")))
-                .nickname(user.get("nickname"))
-                .introduce("")
-                .roles(Collections.singletonList("ROLE_USER"))
-                .build()).getId();
+        return userService.join(user.get("email"), user.get("password"), user.get("nickname"), passwordEncoder);
     }
 
     @PostMapping("/api/v1/login")
-    public ResponseEntity<Token> login(@RequestBody Map<String, String> user, HttpServletResponse response) {
-        Account member = accountRepository.findByEmail(user.get("email"))
-                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
-        if (!passwordEncoder.matches(user.get("password"), member.getPassword())) {
-            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
-        }
+    public ResponseEntity<Token> login(@RequestBody Map<String, String> user) {
+        Account member = userService.login(user.get("email"), user.get("password"), passwordEncoder);
 
         Token token = tokenService.generateToken(member.getEmail(), member.getRoles().get(0));
         tokenService.saveRefreshToken(token.getRefreshToken(), user.get("email"));
@@ -76,10 +65,7 @@ public class UserController {
 
     @PostMapping("/api/v1/change-password")
     public Long changePassword(@RequestBody Map<String, String> user, @CurrentUser Account account) {
-        if (!passwordEncoder.matches(user.get("current_password"), account.getPassword())) {
-            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
-        }
-        return accountRepository.save(account.update(null, passwordEncoder.encode(user.get("new_password")), null, null, null, null)).getId();
+        return userService.changePassword(user.get("current_password"), user.get("new_password"), account, passwordEncoder);
     }
 
     @GetMapping("/api/v1/my-profile")
@@ -94,7 +80,7 @@ public class UserController {
 
     @ResponseBody
     @GetMapping("/images/profile/{filename}")
-    public Resource showStudyImage(@PathVariable String filename) throws MalformedURLException {
+    public Resource showProfileImage(@PathVariable String filename) throws MalformedURLException {
         File imageFile = new File("C://uploads/profile/thumbnail_images/thumbnail_" + filename);
         return new UrlResource("file:" + imageFile.getAbsolutePath());
     }
