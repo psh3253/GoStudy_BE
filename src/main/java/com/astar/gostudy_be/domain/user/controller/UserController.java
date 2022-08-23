@@ -81,7 +81,7 @@ public class UserController {
     @ResponseBody
     @GetMapping("/images/profile/{filename}")
     public Resource showProfileImage(@PathVariable String filename) throws MalformedURLException {
-        File imageFile = new File("C://uploads/profile/thumbnail_images/thumbnail_" + filename);
+        File imageFile = new File(Config.UPLOAD_FILE_PATH + "uploads/profile/thumbnail_images/thumbnail_" + filename);
         return new UrlResource("file:" + imageFile.getAbsolutePath());
     }
 }

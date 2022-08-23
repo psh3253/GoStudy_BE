@@ -1,5 +1,6 @@
 package com.astar.gostudy_be.domain.study.service;
 
+import com.astar.gostudy_be.config.Config;
 import com.astar.gostudy_be.domain.study.dto.*;
 import com.astar.gostudy_be.domain.study.entity.*;
 import com.astar.gostudy_be.domain.study.repository.*;
@@ -75,10 +76,10 @@ public class StudyService {
             filename = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")) + '.' + extension;
 
             try {
-                File imageFile = new File("C://uploads/study/images/" + filename);
+                File imageFile = new File(Config.UPLOAD_FILE_PATH + "uploads/study/images/" + filename);
                 studyCreateDto.getImage().transferTo(imageFile);
 
-                File thumbnailImageFile = new File("C://uploads/study/thumbnail_images/" + "thumbnail_" + filename);
+                File thumbnailImageFile = new File(Config.UPLOAD_FILE_PATH + "uploads/study/thumbnail_images/" + "thumbnail_" + filename);
                 Image image = ImageIO.read(imageFile);
                 Image resizedImage = image.getScaledInstance(400, 300, Image.SCALE_SMOOTH);
                 BufferedImage newImage = new BufferedImage(400, 300, BufferedImage.TYPE_INT_RGB);
@@ -133,8 +134,8 @@ public class StudyService {
             throw new RuntimeException("사용자가 스터디의 소유자랑 일치하지 않습니다.");
         }
         if (!Objects.equals(study.getImage(), "default.jpg")) {
-            new File("C://uploads/study/images/" + study.getImage()).delete();
-            new File("C://uploads/study/thumbnail_images/thumbnail_" + study.getImage()).delete();
+            new File(Config.UPLOAD_FILE_PATH + "uploads/study/images/" + study.getImage()).delete();
+            new File(Config.UPLOAD_FILE_PATH + "uploads/study/thumbnail_images/thumbnail_" + study.getImage()).delete();
         }
         studyRepository.delete(study);
         return study.getId();

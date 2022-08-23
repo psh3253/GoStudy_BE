@@ -1,5 +1,6 @@
 package com.astar.gostudy_be.domain.post.service;
 
+import com.astar.gostudy_be.config.Config;
 import com.astar.gostudy_be.domain.post.dto.PostCreateDto;
 import com.astar.gostudy_be.domain.post.dto.PostDto;
 import com.astar.gostudy_be.domain.post.dto.PostListDto;
@@ -59,10 +60,10 @@ public class PostService {
             filename = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")) + '.' + extension;
 
             try {
-                File imageFile = new File("C://uploads/post/images/" + filename);
+                File imageFile = new File(Config.UPLOAD_FILE_PATH + "uploads/post/images/" + filename);
                 postCreateDto.getImage().transferTo(imageFile);
 
-                File thumbnailImageFile = new File("C://uploads/post/thumbnail_images/" + "thumbnail_" + filename);
+                File thumbnailImageFile = new File(Config.UPLOAD_FILE_PATH + "uploads/post/thumbnail_images/" + "thumbnail_" + filename);
                 Image image = ImageIO.read(imageFile);
                 Image resizedImage = image.getScaledInstance(640, 640, Image.SCALE_SMOOTH);
                 BufferedImage newImage = new BufferedImage(640, 640, BufferedImage.TYPE_INT_RGB);
@@ -95,8 +96,8 @@ public class PostService {
         if (!Objects.equals(post.getAccount().getEmail(), account.getEmail())) {
             throw new RuntimeException("사용자가 게시글의 소유자랑 일치하지 않습니다.");
         }
-        new File("C://uploads/post/images/" + post.getImage()).delete();
-        new File("C://uploads/post/thumbnail_images/thumbnail_" + post.getImage()).delete();
+        new File(Config.UPLOAD_FILE_PATH + "uploads/post/images/" + post.getImage()).delete();
+        new File(Config.UPLOAD_FILE_PATH + "uploads/post/thumbnail_images/thumbnail_" + post.getImage()).delete();
         postRepository.delete(post);
         return post.getId();
     }

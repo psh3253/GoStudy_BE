@@ -1,6 +1,7 @@
 package com.astar.gostudy_be.domain.study.controller;
 
 import com.astar.gostudy_be.annotation.CurrentUser;
+import com.astar.gostudy_be.config.Config;
 import com.astar.gostudy_be.domain.study.dto.*;
 import com.astar.gostudy_be.domain.study.service.StudyService;
 import com.astar.gostudy_be.domain.user.entity.Account;
@@ -86,7 +87,7 @@ public class StudyController {
     @ResponseBody
     @GetMapping("/images/study/{filename}")
     public Resource showStudyImage(@PathVariable String filename) throws MalformedURLException {
-        File imageFile = new File("C://uploads/study/thumbnail_images/thumbnail_" + filename);
+        File imageFile = new File(Config.UPLOAD_FILE_PATH + "uploads/study/thumbnail_images/thumbnail_" + filename);
         return new UrlResource("file:" + imageFile.getAbsolutePath());
     }
 }

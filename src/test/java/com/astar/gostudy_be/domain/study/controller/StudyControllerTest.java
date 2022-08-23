@@ -1,5 +1,6 @@
 package com.astar.gostudy_be.domain.study.controller;
 
+import com.astar.gostudy_be.GoStudyBeApplication;
 import com.astar.gostudy_be.domain.study.dto.CategoryListDto;
 import com.astar.gostudy_be.domain.study.dto.StudyDto;
 import com.astar.gostudy_be.domain.study.dto.StudyListDto;
@@ -433,6 +434,9 @@ class StudyControllerTest {
     void showStudyImage() throws Exception {
         // given
         String filename = "default.jpg";
+
+        GoStudyBeApplication.createUploadsDirectory();
+        GoStudyBeApplication.copyDefaultImage();
 
         // when & then
         mockMvc.perform(get("/images/study/" + filename)

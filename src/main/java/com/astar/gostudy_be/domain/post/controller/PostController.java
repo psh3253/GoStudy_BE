@@ -1,6 +1,7 @@
 package com.astar.gostudy_be.domain.post.controller;
 
 import com.astar.gostudy_be.annotation.CurrentUser;
+import com.astar.gostudy_be.config.Config;
 import com.astar.gostudy_be.domain.post.dto.PostCreateDto;
 import com.astar.gostudy_be.domain.post.dto.PostDto;
 import com.astar.gostudy_be.domain.post.dto.PostListDto;
@@ -50,7 +51,7 @@ public class PostController {
     @ResponseBody
     @GetMapping("/images/post/{filename}")
     public Resource showStudyImage(@PathVariable String filename) throws MalformedURLException {
-        File imageFile = new File("C://uploads/post/thumbnail_images/thumbnail_" + filename);
+        File imageFile = new File(Config.UPLOAD_FILE_PATH + "uploads/post/thumbnail_images/thumbnail_" + filename);
         return new UrlResource("file:" + imageFile.getAbsolutePath());
     }
 }

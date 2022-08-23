@@ -1,5 +1,6 @@
 package com.astar.gostudy_be.domain.user.service;
 
+import com.astar.gostudy_be.config.Config;
 import com.astar.gostudy_be.domain.user.dto.ProfileDto;
 import com.astar.gostudy_be.domain.user.dto.ProfileUpdateDto;
 import com.astar.gostudy_be.domain.user.entity.Account;
@@ -80,17 +81,17 @@ public class UserService implements UserDetailsService {
         String filename = null;
         if(profileUpdateDto.getImage() != null) {
             if (!Objects.equals(account.getImage(), "default.png") || !account.getImage().contains("http")) {
-                new File("C://uploads/profile/images/" + account.getImage()).delete();
-                new File("C://uploads/profile/thumbnail_images/thumbnail_" + account.getImage()).delete();
+                new File(Config.UPLOAD_FILE_PATH + "uploads/profile/images/" + account.getImage()).delete();
+                new File(Config.UPLOAD_FILE_PATH + "uploads/profile/thumbnail_images/thumbnail_" + account.getImage()).delete();
             }
             String extension = StringUtils.getFilenameExtension(profileUpdateDto.getImage().getOriginalFilename());
             filename = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")) + '.' + extension;
 
             try {
-                File imageFile = new File("C://uploads/profile/images/" + filename);
+                File imageFile = new File(Config.UPLOAD_FILE_PATH + "uploads/profile/images/" + filename);
                 profileUpdateDto.getImage().transferTo(imageFile);
 
-                File thumbnailImageFile = new File("C://uploads/profile/thumbnail_images/" + "thumbnail_" + filename);
+                File thumbnailImageFile = new File(Config.UPLOAD_FILE_PATH + "uploads/profile/thumbnail_images/" + "thumbnail_" + filename);
                 Image image = ImageIO.read(imageFile);
                 Image resizedImage = image.getScaledInstance(640, 640, Image.SCALE_SMOOTH);
                 BufferedImage newImage = new BufferedImage(640, 640, BufferedImage.TYPE_INT_RGB);

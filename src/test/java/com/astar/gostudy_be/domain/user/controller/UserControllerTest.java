@@ -1,5 +1,6 @@
 package com.astar.gostudy_be.domain.user.controller;
 
+import com.astar.gostudy_be.GoStudyBeApplication;
 import com.astar.gostudy_be.domain.user.dto.AccountAdapter;
 import com.astar.gostudy_be.domain.user.dto.ProfileDto;
 import com.astar.gostudy_be.domain.user.dto.ProfileUpdateDto;
@@ -259,6 +260,9 @@ class UserControllerTest {
     void showProfileImage() throws Exception {
         // given
         String filename = "default.png";
+
+        GoStudyBeApplication.createUploadsDirectory();
+        GoStudyBeApplication.copyDefaultImage();
 
         // when & then
         mockMvc.perform(get("/images/profile/" + filename)
