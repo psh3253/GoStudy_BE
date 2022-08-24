@@ -1,0 +1,10 @@
+version: '3.0'
+services:
+  web:
+    image: psh3253/gostudybe:1.0
+    ports:
+      - "3000:3000"
+  nginx:
+    image: psh3253/nginx:1.0
+    ports:
+      - "80:80"
