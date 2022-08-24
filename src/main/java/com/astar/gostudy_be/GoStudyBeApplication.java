@@ -29,6 +29,11 @@ public class GoStudyBeApplication {
     }
 
     public static void main(String[] args) {
+        String os = System.getProperty("os.name").toLowerCase();
+        if(os.contains("win"))
+            Config.UPLOAD_FILE_PATH = "C://";
+        else
+            Config.UPLOAD_FILE_PATH = "/home/";
         createUploadsDirectory();
         SpringApplication.run(GoStudyBeApplication.class, args);
         copyDefaultImage();
