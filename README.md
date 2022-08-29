@@ -6,8 +6,20 @@ Spring Boot로 구현한 스터디 플랫폼 웹 애플리케이션 입니다.
 
 ## Getting Started / 어떻게 시작하나요?
 
-아래의 명령어로 서버를 실행하시면 됩니다.
+아래의 명령어로 서버를 직접 빌드해서 실행하거나 Docker Compose를 사용하여 바로 실행하시면 됩니다.
+1. 직접 빌드하여 실행
 ```
+git clone https://github.com/psh3253/GoStudy_BE.git
+cd GoStudy_BE
+./gradlew build
+docker build -t gostudybe:lastest ./
+docker run -it -d --name gostudybe gostudybe:lastest
+```
+
+2. Docker Compose를 사용하여 간편 실행
+```
+git clone https://github.com/psh3253/GoStudy_BE.git
+cd GoStudy_BE
 cd compose
 docker compose up -d
 ```
