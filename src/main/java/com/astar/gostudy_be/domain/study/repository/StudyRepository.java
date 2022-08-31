@@ -15,6 +15,6 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
 
     Optional<Study> findStudyByAccessUrl(String accessUrl);
 
-    @Query(value = "SELECT s.* FROM Study s WHERE s.id IN (SELECT p.study_id FROM Participant p WHERE p.user_id = (SELECT a.id FROM Account a WHERE a.email = :email))", nativeQuery = true)
+    @Query(value = "SELECT s.* FROM study s WHERE s.id IN (SELECT p.study_id FROM participant p WHERE p.user_id = (SELECT a.id FROM account a WHERE a.email = :email))", nativeQuery = true)
     List<Study> findAllByAccountEmail(String email);
 }

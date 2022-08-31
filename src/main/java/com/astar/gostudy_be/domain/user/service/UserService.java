@@ -45,7 +45,7 @@ public class UserService implements UserDetailsService {
     public Long join(String email, String password, String nickname, PasswordEncoder passwordEncoder) {
         return accountRepository.save(Account.builder()
                 .email(email)
-                .image("thumbnail_default.png")
+                .image("default.png")
                 .password(passwordEncoder.encode(password))
                 .nickname(nickname)
                 .introduce("")
