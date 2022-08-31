@@ -62,6 +62,7 @@ public class SecurityConfig {
                 .and()
                 .oauth2Login()
                 .successHandler(successHandler)
+                .defaultSuccessUrl(Config.WEB_URL)
                 .userInfoEndpoint().userService(oAuth2Service);
         http.addFilterBefore(new JwtAuthFilter(tokenService, userService), UsernamePasswordAuthenticationFilter.class);
         return http.build();
