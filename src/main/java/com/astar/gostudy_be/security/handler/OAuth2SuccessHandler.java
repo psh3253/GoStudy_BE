@@ -62,6 +62,5 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         response.addCookie(refreshTokenCookie);
         response.addCookie(isLoginCookie);
         response.addCookie(userEmailCookie);
-        response.sendRedirect(Config.WEB_URL);
     }
 }

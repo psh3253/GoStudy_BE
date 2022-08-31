@@ -26,25 +26,27 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         String email = tokenService.getUid(token);
         tokenService.deleteRefreshToken(email);
 
-        Cookie accessTokenCookie = new Cookie("Auth", "deleted");
-        accessTokenCookie.setDomain(Config.WEB_COOKIE_DOMAIN);
-        accessTokenCookie.setMaxAge(-1);
+//        Cookie accessTokenCookie = new Cookie("Auth", "deleted");
+//        accessTokenCookie.setDomain(Config.WEB_COOKIE_DOMAIN);
+//        accessTokenCookie.setMaxAge(-1);
+//
+//        Cookie refreshTokenCookie = new Cookie("Refresh", "deleted");
+//        refreshTokenCookie.setDomain(Config.WEB_COOKIE_DOMAIN);
+//        refreshTokenCookie.setMaxAge(-1);
+//
+//        Cookie isLoginCookie = new Cookie("IsLogin", "false");
+//        isLoginCookie.setDomain(Config.WEB_COOKIE_DOMAIN);
+//        isLoginCookie.setMaxAge(-1);
+//
+//        Cookie userEmailCookie = new Cookie("UserEmail", "deleted");
+//        userEmailCookie.setDomain(Config.WEB_COOKIE_DOMAIN);
+//        userEmailCookie.setMaxAge(-1);
+//
+//        response.addCookie(accessTokenCookie);
+//        response.addCookie(refreshTokenCookie);
+//        response.addCookie(isLoginCookie);
+//        response.addCookie(userEmailCookie);
 
-        Cookie refreshTokenCookie = new Cookie("Refresh", "deleted");
-        refreshTokenCookie.setDomain(Config.WEB_COOKIE_DOMAIN);
-        refreshTokenCookie.setMaxAge(-1);
-
-        Cookie isLoginCookie = new Cookie("IsLogin", "false");
-        isLoginCookie.setDomain(Config.WEB_COOKIE_DOMAIN);
-        isLoginCookie.setMaxAge(-1);
-
-        Cookie userEmailCookie = new Cookie("UserEmail", "deleted");
-        userEmailCookie.setDomain(Config.WEB_COOKIE_DOMAIN);
-        userEmailCookie.setMaxAge(-1);
-
-        response.addCookie(accessTokenCookie);
-        response.addCookie(refreshTokenCookie);
-        response.addCookie(isLoginCookie);
-        response.addCookie(userEmailCookie);
+        response.addHeader("Set-Cookie", "Auth=deleted;Refresh=deleted;IsLogin=false;UserEmail=deleted;");
     }
 }
