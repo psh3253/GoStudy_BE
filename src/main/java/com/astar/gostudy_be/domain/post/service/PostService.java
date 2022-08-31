@@ -82,7 +82,7 @@ public class PostService {
     @Transactional
     public Long updatePost(PostUpdateDto postUpdateDto, Long postId, Account account) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
-        if (!Objects.equals(post.getId(), postId)) {
+        if (!Objects.equals(postUpdateDto.getId(), postId)) {
             throw new RuntimeException("게시글 번호가 일치하지 않습니다.");
         } else if (!Objects.equals(post.getAccount().getEmail(), account.getEmail())) {
             throw new RuntimeException("사용자가 게시글의 소유자랑 일치하지 않습니다.");
