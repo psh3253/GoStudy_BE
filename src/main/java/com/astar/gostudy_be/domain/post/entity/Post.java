@@ -69,7 +69,7 @@ public class Post extends BaseTimeEntity {
             this.content = post.getContent();
         if(post.getTitle() != null)
             this.title = post.getTitle();
-        if(post.getContent() != null)
+        if(post.getCommentCount() != null)
             this.commentCount = post.getCommentCount();
         return this;
     }
