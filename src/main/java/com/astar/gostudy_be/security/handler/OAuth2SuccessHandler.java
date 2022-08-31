@@ -7,8 +7,6 @@ import com.astar.gostudy_be.security.dto.Token;
 import com.astar.gostudy_be.security.service.TokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -19,7 +17,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 @RequiredArgsConstructor
 @Component
@@ -45,20 +42,20 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         Cookie accessTokenCookie = new Cookie("Auth", token.getAccessToken());
         accessTokenCookie.setPath("/");
         accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setDomain(Config.WEB_DOMAIN);
+        accessTokenCookie.setDomain(Config.WEB_COOKIE_DOMAIN);
         accessTokenCookie.setMaxAge(60 * 60 * 6);
         Cookie refreshTokenCookie = new Cookie("Refresh", token.getRefreshToken());
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setDomain(Config.WEB_DOMAIN);
+        refreshTokenCookie.setDomain(Config.WEB_COOKIE_DOMAIN);
         refreshTokenCookie.setMaxAge(60 * 60 * 24 * 30);
         Cookie isLoginCookie = new Cookie("IsLogin", "true");
         isLoginCookie.setPath("/");
-        isLoginCookie.setDomain(Config.WEB_DOMAIN);
+        isLoginCookie.setDomain(Config.WEB_COOKIE_DOMAIN);
         isLoginCookie.setMaxAge(60 * 60 * 6);
         Cookie userEmailCookie = new Cookie("UserEmail", tokenService.getUid(token.getAccessToken()));
         userEmailCookie.setPath("/");
-        userEmailCookie.setDomain(Config.WEB_DOMAIN);
+        userEmailCookie.setDomain(Config.WEB_COOKIE_DOMAIN);
         userEmailCookie.setMaxAge(60 * 60 * 6);
 
         response.addCookie(accessTokenCookie);

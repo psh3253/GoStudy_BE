@@ -5,7 +5,6 @@ import com.astar.gostudy_be.config.Config;
 import com.astar.gostudy_be.domain.user.dto.ProfileDto;
 import com.astar.gostudy_be.domain.user.dto.ProfileUpdateDto;
 import com.astar.gostudy_be.domain.user.entity.Account;
-import com.astar.gostudy_be.domain.user.repository.AccountRepository;
 import com.astar.gostudy_be.domain.user.service.UserService;
 import com.astar.gostudy_be.security.dto.Token;
 import com.astar.gostudy_be.security.service.TokenService;
@@ -17,12 +16,9 @@ import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.Map;
 
 @Slf4j
@@ -49,13 +45,13 @@ public class UserController {
         tokenService.saveRefreshToken(token.getRefreshToken(), user.get("email"));
 
         ResponseCookie accessTokenCookie = ResponseCookie.from("Auth", token.getAccessToken())
-                .path("/").httpOnly(true).domain(Config.WEB_DOMAIN).maxAge(60L * 60L * 6L).build();
+                .path("/").httpOnly(true).domain(Config.WEB_COOKIE_DOMAIN).maxAge(60L * 60L * 6L).build();
         ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh", token.getRefreshToken())
-                .path("/").httpOnly(true).domain(Config.WEB_DOMAIN).maxAge(60L * 60L * 24L * 30L).build();
+                .path("/").httpOnly(true).domain(Config.WEB_COOKIE_DOMAIN).maxAge(60L * 60L * 24L * 30L).build();
         ResponseCookie isLoginCookie = ResponseCookie.from("IsLogin", "true")
-                .path("/").domain(Config.WEB_DOMAIN).maxAge(60L * 60L * 6L).build();
+                .path("/").domain(Config.WEB_COOKIE_DOMAIN).maxAge(60L * 60L * 6L).build();
         ResponseCookie userEmailCookie = ResponseCookie.from("UserEmail", user.get("email"))
-                .path("/").domain(Config.WEB_DOMAIN).maxAge(60L * 60L * 6L).build();
+                .path("/").domain(Config.WEB_COOKIE_DOMAIN).maxAge(60L * 60L * 6L).build();
 
         return ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), refreshTokenCookie.toString(), isLoginCookie.toString(), userEmailCookie.toString())
