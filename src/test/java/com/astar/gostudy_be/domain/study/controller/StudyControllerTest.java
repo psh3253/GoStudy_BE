@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -88,7 +89,6 @@ class StudyControllerTest {
                 .name(categoryName)
                 .build();
         Study study = Study.builder()
-                .id(studyId)
                 .name(name)
                 .image(filename)
                 .category(category)
@@ -103,6 +103,7 @@ class StudyControllerTest {
                 .visibility(Visibility.PUBLIC)
                 .account(loginAccount)
                 .build();
+        ReflectionTestUtils.setField(study, "id", studyId);
         List<StudyListDto> studyListDtos = new ArrayList<>();
         studyListDtos.add(new StudyListDto(study));
 
@@ -142,7 +143,6 @@ class StudyControllerTest {
                 .name(categoryName)
                 .build();
         Study study = Study.builder()
-                .id(studyId)
                 .name(name)
                 .image(filename)
                 .category(category)
@@ -157,6 +157,7 @@ class StudyControllerTest {
                 .visibility(Visibility.PUBLIC)
                 .account(loginAccount)
                 .build();
+        ReflectionTestUtils.setField(study, "id", studyId);
         List<StudyListDto> studyListDtos = new ArrayList<>();
         studyListDtos.add(new StudyListDto(study));
 
@@ -254,7 +255,6 @@ class StudyControllerTest {
                 .name(categoryName)
                 .build();
         Study study = Study.builder()
-                .id(studyId)
                 .name(name)
                 .image(filename)
                 .category(category)
@@ -269,6 +269,7 @@ class StudyControllerTest {
                 .visibility(visibility)
                 .account(loginAccount)
                 .build();
+        ReflectionTestUtils.setField(study, "id", studyId);
 
         given(studyService.findStudyById(eq(studyId))).willReturn(new StudyDto(study));
 

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,6 @@ class ApplicantServiceTest {
                 .name("카테고리 1")
                 .build();
         Study study = Study.builder()
-                .id(studyId)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(category)
@@ -73,6 +73,7 @@ class ApplicantServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", studyId);
         Account applicantAccount = Account.builder()
                 .id(2L)
                 .email(email)
@@ -83,11 +84,11 @@ class ApplicantServiceTest {
                 .refreshToken("리프레쉬 토큰 2")
                 .build();
         Applicant applicant = Applicant.builder()
-                .id(id)
                 .account(applicantAccount)
                 .study(study)
                 .message(message)
                 .build();
+        ReflectionTestUtils.setField(applicant, "id", id);
         List<Applicant> applicants = new ArrayList<>();
         applicants.add(applicant);
 
@@ -109,6 +110,7 @@ class ApplicantServiceTest {
     void acceptParticipation() {
         // given
         Long id = 1L;
+        Long studyId = 1L;
 
         Account account = Account.builder()
                 .id(1L)
@@ -124,7 +126,6 @@ class ApplicantServiceTest {
                 .name("카테고리 1")
                 .build();
         Study study = Study.builder()
-                .id(1L)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(category)
@@ -139,6 +140,7 @@ class ApplicantServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", studyId);
         Account applicantAccount = Account.builder()
                 .id(2L)
                 .email("이메일 2")
@@ -149,11 +151,11 @@ class ApplicantServiceTest {
                 .refreshToken("리프레쉬 토큰 2")
                 .build();
         Applicant applicant = Applicant.builder()
-                .id(id)
                 .account(applicantAccount)
                 .study(study)
                 .message("메시지 1")
                 .build();
+        ReflectionTestUtils.setField(applicant, "id", id);
 
         when(applicantRepository.findById(id)).thenReturn(Optional.ofNullable(applicant));
 
@@ -168,6 +170,8 @@ class ApplicantServiceTest {
     void deleteApplicant() {
         // given
         Long id = 1L;
+        Long studyId = 1L;
+
         Account account = Account.builder()
                 .id(1L)
                 .email("이메일 1")
@@ -182,7 +186,6 @@ class ApplicantServiceTest {
                 .name("카테고리 1")
                 .build();
         Study study = Study.builder()
-                .id(1L)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(category)
@@ -197,6 +200,7 @@ class ApplicantServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", studyId);
         Account applicantAccount = Account.builder()
                 .id(2L)
                 .email("이메일 2")
@@ -207,11 +211,11 @@ class ApplicantServiceTest {
                 .refreshToken("리프레쉬 토큰 2")
                 .build();
         Applicant applicant = Applicant.builder()
-                .id(id)
                 .account(applicantAccount)
                 .study(study)
                 .message("메시지 1")
                 .build();
+        ReflectionTestUtils.setField(applicant, "id", id);
         when(applicantRepository.findById(id)).thenReturn(Optional.ofNullable(applicant));
 
         // when

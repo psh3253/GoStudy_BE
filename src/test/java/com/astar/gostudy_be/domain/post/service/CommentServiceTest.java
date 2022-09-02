@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,7 @@ class CommentServiceTest {
         // given
         Long id = 1L;
         Long postId = 1L;
+        Long studyId = 1L;
         String content = "내용 1";
         String email = "이메일 1";
         String image = "이미지 1";
@@ -61,7 +63,6 @@ class CommentServiceTest {
                 .name("카테고리 1")
                 .build();
         Study study = Study.builder()
-                .id(1L)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(category)
@@ -76,8 +77,8 @@ class CommentServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", studyId);
         Post post = Post.builder()
-                .id(id)
                 .title("제목 1")
                 .content("내용 1")
                 .image(image)
@@ -85,12 +86,13 @@ class CommentServiceTest {
                 .study(study)
                 .commentCount(0L)
                 .build();
+        ReflectionTestUtils.setField(post, "id", postId);
         Comment comment = Comment.builder()
-                .id(id)
                 .content(content)
                 .post(post)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(comment, "id", id);
         List<Comment> comments = new ArrayList<>();
         comments.add(comment);
         when(commentRepository.findAllByPostId(postId)).thenReturn(comments);
@@ -111,6 +113,7 @@ class CommentServiceTest {
         // given
         Long id = 1L;
         String content = "내용 1";
+        Long participantId = 1L;
         Long postId = 1L;
         Long studyId = 1L;
         String email = "이메일 1";
@@ -129,7 +132,6 @@ class CommentServiceTest {
                 .name("카테고리 1")
                 .build();
         Study study = Study.builder()
-                .id(studyId)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(category)
@@ -144,8 +146,8 @@ class CommentServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", studyId);
         Post post = Post.builder()
-                .id(postId)
                 .title("제목 1")
                 .content("내용 1")
                 .image("이미지 1")
@@ -153,18 +155,18 @@ class CommentServiceTest {
                 .study(study)
                 .commentCount(0L)
                 .build();
+        ReflectionTestUtils.setField(post, "id", postId);
         Participant participant = Participant.builder()
-                .id(1L)
                 .account(account)
                 .study(study)
                 .build();
+        ReflectionTestUtils.setField(participant, "id", participantId);
         Comment comment = Comment.builder()
-                .id(id)
                 .content(content)
                 .post(post)
                 .account(account)
                 .build();
-
+        ReflectionTestUtils.setField(comment, "id", id);
 
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
         when(postRepository.findById(postId)).thenReturn(Optional.ofNullable(post));
@@ -181,6 +183,8 @@ class CommentServiceTest {
     void deleteComment() {
         // given
         Long id = 1L;
+        Long postId = 1L;
+        Long studyId = 1L;
 
         Account account = Account.builder()
                 .id(1L)
@@ -196,7 +200,6 @@ class CommentServiceTest {
                 .name("카테고리 1")
                 .build();
         Study study = Study.builder()
-                .id(1L)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(category)
@@ -211,8 +214,8 @@ class CommentServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", studyId);
         Post post = Post.builder()
-                .id(1L)
                 .title("제목 1")
                 .content("내용 1")
                 .image("이미지 1")
@@ -220,12 +223,13 @@ class CommentServiceTest {
                 .study(study)
                 .commentCount(0L)
                 .build();
+        ReflectionTestUtils.setField(post, "id", postId);
         Comment comment = Comment.builder()
-                .id(id)
                 .content("내용 1")
                 .post(post)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(comment, "id", id);
 
         when(commentRepository.findById(id)).thenReturn(Optional.ofNullable(comment));
 

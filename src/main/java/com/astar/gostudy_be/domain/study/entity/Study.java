@@ -80,8 +80,7 @@ public class Study extends BaseTimeEntity {
     private Account account;
 
     @Builder
-    public Study(Long id, String name, String image, Category category, StudyType type, String location, Integer currentNumber, Integer recruitmentNumber, Visibility visibility, JoinType joinType, Boolean isRecruiting, String introduce, String accessUrl, Account account) {
-        this.id = id;
+    public Study(String name, String image, Category category, StudyType type, String location, Integer currentNumber, Integer recruitmentNumber, Visibility visibility, JoinType joinType, Boolean isRecruiting, String introduce, String accessUrl, Account account) {
         this.name = name;
         this.image = image;
         this.category = category;
@@ -98,8 +97,6 @@ public class Study extends BaseTimeEntity {
     }
 
     public Study update(Study study) {
-        if(study.getId() != null)
-            this.id = study.getId();
         if(study.getName() != null)
             this.name = study.getName();
         if(study.getImage() != null)

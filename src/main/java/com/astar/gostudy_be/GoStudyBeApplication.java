@@ -57,15 +57,15 @@ public class GoStudyBeApplication {
 
     public static void copyDefaultImage() {
         try {
-            Resource profileResource = context.getResource("classpath:/static/profile/thumbnail_default.png");
+            Resource profileResource = context.getResource("classpath:" + File.separator + "static" + File.separator + "profile" + File.separator +"thumbnail_default.png");
             File srcProfileImage = new File(profileResource.getURI());
-            File dstProfileImage = new File(Config.UPLOAD_FILE_PATH + "uploads/profile/thumbnail_images/thumbnail_default.png");
+            File dstProfileImage = new File(Config.UPLOAD_FILE_PATH + "uploads" + File.separator + "profile" + File.separator + "thumbnail_images" + File.separator + "thumbnail_default.png");
 
             Files.copy(srcProfileImage.toPath(), dstProfileImage.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-            Resource studyResource = context.getResource("classpath:/static/study/thumbnail_default.jpg");
+            Resource studyResource = context.getResource("classpath:" + File.separator + "static" + File.separator + "study" + File.separator +"thumbnail_default.jpg");
             File srcStudyImage = new File(studyResource.getURI());
-            File dstStudyImage = new File(Config.UPLOAD_FILE_PATH + "uploads/study/thumbnail_images/thumbnail_default.jpg");
+            File dstStudyImage = new File(Config.UPLOAD_FILE_PATH + "uploads" + File.separator + "study" + File.separator + "thumbnail_images" + File.separator + "thumbnail_default.jpg");
 
             Files.copy(srcStudyImage.toPath(), dstStudyImage.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {

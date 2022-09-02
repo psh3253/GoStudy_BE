@@ -70,16 +70,16 @@ public class TokenService {
     }
 
     @Transactional
-    public void saveRefreshToken(String token, String email) {
+    public Long saveRefreshToken(String token, String email) {
         Account account = accountRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
         account.update(null, null, null, null,  null, token);
-        accountRepository.save(account);
+        return accountRepository.save(account).getId();
     }
 
     @Transactional
-    public void deleteRefreshToken(String email) {
+    public Long deleteRefreshToken(String email) {
         Account account = accountRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
         account.update(null, null, null, null, null, "deleted");
-        accountRepository.save(account);
+        return accountRepository.save(account).getId();
     }
 }

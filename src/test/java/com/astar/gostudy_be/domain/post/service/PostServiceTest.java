@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +66,6 @@ class PostServiceTest {
                 .name("카테고리 1")
                 .build();
         Study study = Study.builder()
-                .id(studyId)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(category)
@@ -80,8 +80,8 @@ class PostServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", studyId);
         Post post = Post.builder()
-                .id(id)
                 .title(title)
                 .content("내용 1")
                 .image(image)
@@ -89,6 +89,7 @@ class PostServiceTest {
                 .study(study)
                 .commentCount(commentCount)
                 .build();
+        ReflectionTestUtils.setField(post, "id", id);
         List<Post> posts = new ArrayList<>();
         posts.add(post);
 
@@ -111,6 +112,7 @@ class PostServiceTest {
     void findPostByPostId() {
         // given
         Long id = 1L;
+        Long studyId = 1L;
         String title = "제목 1";
         String content = "내용 1";
         String image = "이미지 1";
@@ -133,7 +135,6 @@ class PostServiceTest {
                 .name("카테고리 1")
                 .build();
         Study study = Study.builder()
-                .id(1L)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(category)
@@ -148,8 +149,8 @@ class PostServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", studyId);
         Post post = Post.builder()
-                .id(id)
                 .title(title)
                 .content("내용 1")
                 .image(image)
@@ -157,6 +158,7 @@ class PostServiceTest {
                 .study(study)
                 .commentCount(commentCount)
                 .build();
+        ReflectionTestUtils.setField(post, "id", id);
 
         when(postRepository.findById(id)).thenReturn(Optional.ofNullable(post));
 
@@ -179,6 +181,7 @@ class PostServiceTest {
         // given
         Long id = 1L;
         Long studyId = 1L;
+        Long participantId = 1L;
         String email = "이메일 1";
         PostCreateDto postCreateDto = new PostCreateDto("제목 1", "내용 1", null);
 
@@ -196,7 +199,6 @@ class PostServiceTest {
                 .name("카테고리 1")
                 .build();
         Study study = Study.builder()
-                .id(1L)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(category)
@@ -211,12 +213,14 @@ class PostServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", studyId);
         Participant participant = Participant.builder()
-                .id(1L)
                 .account(account)
                 .study(study)
                 .build();
-        Post post = postCreateDto.toEntity(study, account, "이미지 1").update(Post.builder().id(id).build());
+        ReflectionTestUtils.setField(participant, "id", 1L);
+        Post post = postCreateDto.toEntity(study, account, "이미지 1");
+        ReflectionTestUtils.setField(post, "id", id);
 
         when(studyRepository.findById(studyId)).thenReturn(Optional.ofNullable(study));
         when(participantRepository.findByStudyIdAndAccountEmail(studyId, email)).thenReturn(Optional.ofNullable(participant));
@@ -233,6 +237,7 @@ class PostServiceTest {
     void updatePost() {
         // given
         Long id = 1L;
+        Long studyId = 1L;
 
         PostUpdateDto postUpdateDto = new PostUpdateDto(id, "제목 2", "내용 2");
         Account account = Account.builder()
@@ -249,7 +254,6 @@ class PostServiceTest {
                 .name("카테고리 1")
                 .build();
         Study study = Study.builder()
-                .id(1L)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(category)
@@ -264,8 +268,8 @@ class PostServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", studyId);
         Post post = Post.builder()
-                .id(id)
                 .title("제목 1")
                 .content("내용 1")
                 .image("이미지 1")
@@ -273,6 +277,7 @@ class PostServiceTest {
                 .study(study)
                 .commentCount(0L)
                 .build();
+        ReflectionTestUtils.setField(post, "id", id);
 
         when(postRepository.findById(id)).thenReturn(Optional.ofNullable(post));
         when(postRepository.save(any(Post.class))).thenReturn(post.update(postUpdateDto.toEntity()));
@@ -288,6 +293,7 @@ class PostServiceTest {
     void deletePost() {
         // given
         Long id = 1L;
+        Long studyId = 1L;
 
         Account account = Account.builder()
                 .id(1L)
@@ -303,7 +309,6 @@ class PostServiceTest {
                 .name("카테고리 1")
                 .build();
         Study study = Study.builder()
-                .id(1L)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(category)
@@ -318,8 +323,8 @@ class PostServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", studyId);
         Post post = Post.builder()
-                .id(id)
                 .title("제목 1")
                 .content("내용 1")
                 .image("이미지 1")
@@ -327,6 +332,7 @@ class PostServiceTest {
                 .study(study)
                 .commentCount(0L)
                 .build();
+        ReflectionTestUtils.setField(post, "id", id);
 
         when(postRepository.findById(id)).thenReturn(Optional.ofNullable(post));
 

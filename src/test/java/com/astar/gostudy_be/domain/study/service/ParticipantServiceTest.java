@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,6 @@ class ParticipantServiceTest {
                 .name("카테고리 1")
                 .build();
         Study study = Study.builder()
-                .id(studyId)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(category)
@@ -69,6 +69,7 @@ class ParticipantServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", studyId);
         Account participantAccount = Account.builder()
                 .id(2L)
                 .email(email)
@@ -79,10 +80,10 @@ class ParticipantServiceTest {
                 .refreshToken("리프레쉬 토큰 2")
                 .build();
         Participant participant = Participant.builder()
-                .id(participantId)
                 .study(study)
                 .account(participantAccount)
                 .build();
+        ReflectionTestUtils.setField(participant, "id", participantId);
         List<Participant> participants = new ArrayList<>();
         participants.add(participant);
 
@@ -102,6 +103,7 @@ class ParticipantServiceTest {
     void deleteParticipant() {
         // given
         Long id = 1L;
+        Long studyId = 1L;
         Account account = Account.builder()
                 .email("이메일 1")
                 .password("비밀번호 1")
@@ -115,7 +117,6 @@ class ParticipantServiceTest {
                 .name("카테고리 1")
                 .build();
         Study study = Study.builder()
-                .id(1L)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(category)
@@ -130,6 +131,7 @@ class ParticipantServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", studyId);
         Account participantAccount = Account.builder()
                 .id(2L)
                 .email("이메일 2")
@@ -140,10 +142,10 @@ class ParticipantServiceTest {
                 .refreshToken("리프레쉬 토큰 2")
                 .build();
         Participant participant = Participant.builder()
-                .id(id)
                 .study(study)
                 .account(participantAccount)
                 .build();
+        ReflectionTestUtils.setField(participant, "id", id);
         when(participantRepository.findById(id)).thenReturn(Optional.ofNullable(participant));
 
         // when

@@ -35,7 +35,6 @@ public class StudyUpdateDto {
 
     public Study toEntity(Category category) {
         return Study.builder()
-                .id(id)
                 .name(name)
                 .category(category)
                 .location(location)

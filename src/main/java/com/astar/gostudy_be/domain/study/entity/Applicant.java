@@ -32,8 +32,7 @@ public class Applicant extends BaseTimeEntity {
     Account account;
 
     @Builder
-    public Applicant(Long id, String message, Study study, Account account) {
-        this.id = id;
+    public Applicant(String message, Study study, Account account) {
         this.message = message;
         this.study = study;
         this.account = account;

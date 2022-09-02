@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -78,7 +79,6 @@ class ApplicantControllerTest {
                 .name("카테고리 1")
                 .build();
         Study study = Study.builder()
-                .id(studyId)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(category)
@@ -93,13 +93,13 @@ class ApplicantControllerTest {
                 .visibility(Visibility.PUBLIC)
                 .account(loginAccount)
                 .build();
-
+        ReflectionTestUtils.setField(study, "id", studyId);
         Applicant applicant = Applicant.builder()
-                .id(id)
                 .message(message)
                 .account(loginAccount)
                 .study(study)
                 .build();
+        ReflectionTestUtils.setField(applicant, "id", id);
 
         List<ApplicantListDto> applicantListDtos = new ArrayList<>();
         applicantListDtos.add(new ApplicantListDto(applicant));

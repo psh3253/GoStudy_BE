@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +71,6 @@ class StudyServiceTest {
                 .refreshToken("리프레쉬 토큰 1")
                 .build();
         Study study = Study.builder()
-                .id(id)
                 .name(name)
                 .image(filename)
                 .category(category)
@@ -85,6 +85,7 @@ class StudyServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", id);
         studies.add(study);
         when(studyRepository.findAllByIsRecruitingIsTrueAndVisibilityEquals(Visibility.PUBLIC)).thenReturn(studies);
 
@@ -158,7 +159,6 @@ class StudyServiceTest {
                 .name(categoryName)
                 .build();
         Study study = Study.builder()
-                .id(id)
                 .name(name)
                 .image(filename)
                 .category(category)
@@ -173,6 +173,7 @@ class StudyServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", id);
         List<Study> studies = new ArrayList<>();
         studies.add(study);
         Account participantAccount = Account.builder()
@@ -236,7 +237,6 @@ class StudyServiceTest {
                 .refreshToken("리프레쉬 토큰 1")
                 .build();
         Study study = Study.builder()
-                .id(id)
                 .name(name)
                 .image(filename)
                 .category(category)
@@ -251,6 +251,7 @@ class StudyServiceTest {
                 .visibility(visibility)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", id);
 
         when(studyRepository.findById(id)).thenReturn(Optional.ofNullable(study));
 
@@ -294,7 +295,6 @@ class StudyServiceTest {
                 .refreshToken("리프레쉬 토큰 1")
                 .build();
         Study study = Study.builder()
-                .id(id)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(category)
@@ -309,6 +309,7 @@ class StudyServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", id);
 
         when(studyRepository.findStudyByAccessUrl(accessUrl)).thenReturn(Optional.ofNullable(study));
 
@@ -338,7 +339,8 @@ class StudyServiceTest {
                 .id(1L)
                 .name("카테고리 1")
                 .build();
-        Study study = studyCreateDto.toEntity(category, account, "파일명 1", "URL 1").update(Study.builder().id(id).build());
+        Study study = studyCreateDto.toEntity(category, account, "파일명 1", "URL 1");
+        ReflectionTestUtils.setField(study, "id", id);
 
         when(studyRepository.save(any(Study.class))).thenReturn(study);
         when(categoryRepository.findById(id)).thenReturn(Optional.ofNullable(category));
@@ -370,7 +372,6 @@ class StudyServiceTest {
                 .name("카테고리 1")
                 .build();
         Study study = Study.builder()
-                .id(id)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(category)
@@ -385,6 +386,7 @@ class StudyServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", id);
         when(studyRepository.findById(id)).thenReturn(Optional.ofNullable(study));
         when(studyRepository.save(any(Study.class))).thenReturn(study.update(studyUpdateDto.toEntity(category)));
         when(categoryRepository.findById(category.getId())).thenReturn(Optional.of(category));
@@ -415,7 +417,6 @@ class StudyServiceTest {
                 .name("카테고리 1")
                 .build();
         Study study = Study.builder()
-                .id(id)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(category)
@@ -430,6 +431,7 @@ class StudyServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", id);
         when(studyRepository.findById(id)).thenReturn(Optional.ofNullable(study));
 
         // when
@@ -458,7 +460,6 @@ class StudyServiceTest {
                 .name("카테고리 1")
                 .build();
         Study study = Study.builder()
-                .id(id)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(category)
@@ -473,6 +474,7 @@ class StudyServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", id);
         when(studyRepository.findById(id)).thenReturn(Optional.ofNullable(study));
         when(studyRepository.save(any(Study.class))).thenReturn(study);
 
@@ -514,7 +516,6 @@ class StudyServiceTest {
                     .name("카테고리 1")
                     .build();
             Study study = Study.builder()
-                    .id(studyId)
                     .name("스터디명 1")
                     .image("파일명 1")
                     .category(category)
@@ -529,11 +530,12 @@ class StudyServiceTest {
                     .visibility(Visibility.PUBLIC)
                     .account(account)
                     .build();
+            ReflectionTestUtils.setField(study, "id", studyId);
             Participant participant = Participant.builder()
-                    .id(id)
                     .account(participantAccount)
                     .study(study)
                     .build();
+            ReflectionTestUtils.setField(participant, "id", id);
 
             when(studyRepository.findById(studyId)).thenReturn(Optional.ofNullable(study));
             when(participantRepository.save(any(Participant.class))).thenReturn(participant);
@@ -568,7 +570,6 @@ class StudyServiceTest {
                     .refreshToken("리프레쉬 토큰 2")
                     .build();
             Study study = Study.builder()
-                    .id(studyId)
                     .name("스터디명 1")
                     .image("파일명 1")
                     .category(Category.builder()
@@ -585,12 +586,13 @@ class StudyServiceTest {
                     .visibility(Visibility.PUBLIC)
                     .account(account)
                     .build();
+            ReflectionTestUtils.setField(study, "id", studyId);
             Applicant applicant = Applicant.builder()
-                    .id(id)
                     .account(applicantAccount)
                     .study(study)
                     .message(message)
                     .build();
+            ReflectionTestUtils.setField(applicant, "id", id);
 
             when(studyRepository.findById(studyId)).thenReturn(Optional.ofNullable(study));
             when(applicantRepository.save(any(Applicant.class))).thenReturn(applicant);
@@ -619,7 +621,7 @@ class StudyServiceTest {
                 .refreshToken("리프레쉬 토큰 1")
                 .build();
         Account participantAccount = Account.builder()
-                .id(id)
+                .id(2L)
                 .email("이메일 2")
                 .password("비밀번호 2")
                 .nickname("닉네임 2")
@@ -628,7 +630,6 @@ class StudyServiceTest {
                 .refreshToken("리프레쉬 토큰 2")
                 .build();
         Study study = Study.builder()
-                .id(studyId)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(Category.builder()
@@ -645,11 +646,12 @@ class StudyServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", studyId);
         Participant participant = Participant.builder()
-                .id(id)
                 .account(participantAccount)
                 .study(study)
                 .build();
+        ReflectionTestUtils.setField(participant, "id", id);
         when(participantRepository.findByStudyIdAndAccountEmail(studyId, "이메일 1")).thenReturn(Optional.ofNullable(participant));
         when(studyRepository.findById(studyId)).thenReturn(Optional.ofNullable(study));
 
@@ -686,7 +688,6 @@ class StudyServiceTest {
                 .refreshToken("리프레쉬 토큰 1")
                 .build();
         Study study = Study.builder()
-                .id(id)
                 .name("스터디명 1")
                 .image("파일명 1")
                 .category(Category.builder()
@@ -703,12 +704,13 @@ class StudyServiceTest {
                 .visibility(Visibility.PUBLIC)
                 .account(account)
                 .build();
+        ReflectionTestUtils.setField(study, "id", studyId);
         Applicant applicant = Applicant.builder()
-                .id(id)
                 .account(applicantAccount)
                 .study(study)
                 .message("메시지 1")
                 .build();
+        ReflectionTestUtils.setField(applicant, "id", id);
         when(applicantRepository.findByStudyIdAndAccountEmail(studyId, email)).thenReturn(Optional.ofNullable(applicant));
 
         // when

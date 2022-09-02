@@ -52,8 +52,7 @@ public class Post extends BaseTimeEntity {
     private Account account;
 
     @Builder
-    public Post(Long id, Study study, String title, String content, String image, Long commentCount, Account account) {
-        this.id = id;
+    public Post(Study study, String title, String content, String image, Long commentCount, Account account) {
         this.study = study;
         this.title = title;
         this.content = content;
@@ -63,8 +62,6 @@ public class Post extends BaseTimeEntity {
     }
 
     public Post update(Post post) {
-        if(post.getId() != null)
-            this.id = post.getId();
         if(post.getContent() != null)
             this.content = post.getContent();
         if(post.getTitle() != null)

@@ -5,6 +5,8 @@ services:
     image: psh3253/gostudybe:lastest
     ports:
       - "3000:3000"
+    volumes:
+      - /root/uploads:/home/uploads
   nginx:
     container_name: nginx
     image: psh3253/nginx:1.0
