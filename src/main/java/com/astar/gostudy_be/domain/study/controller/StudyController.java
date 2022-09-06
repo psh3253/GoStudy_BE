@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -71,6 +72,7 @@ public class StudyController {
 
     @PostMapping("/api/v1/studies/{id}/participants")
     public Long participate(@PathVariable Long id, @RequestBody Map<String, String> data, @CurrentUser Account account) {
+        log.info(data.get("message"));
         return studyService.participateStudy(id, data.get("message"), account);
     }
 

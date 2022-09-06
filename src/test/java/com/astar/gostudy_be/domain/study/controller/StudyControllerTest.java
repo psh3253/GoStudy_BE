@@ -10,7 +10,9 @@ import com.astar.gostudy_be.domain.study.service.StudyService;
 import com.astar.gostudy_be.domain.user.dto.AccountAdapter;
 import com.astar.gostudy_be.domain.user.entity.Account;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hibernate.mapping.Join;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -49,7 +51,9 @@ class StudyControllerTest {
     @MockBean
     StudyService studyService;
 
-    Account loginAccount;
+    Account account = null;
+    Category category = null;
+    Study study = null;
 
     @BeforeEach
     void setup() {
@@ -57,7 +61,7 @@ class StudyControllerTest {
                 .webAppContextSetup(context)
                 .apply(springSecurity())
                 .build();
-        loginAccount = Account.builder()
+        account = Account.builder()
                 .id(1L)
                 .email("이메일 1")
                 .password("비밀번호 1")
@@ -67,10 +71,30 @@ class StudyControllerTest {
                 .refreshToken("리프레쉬 토큰 1")
                 .roles(Collections.singletonList("USER"))
                 .build();
+        category = Category.builder()
+                .id(1L)
+                .name("카테고리 1")
+                .build();
+        study = Study.builder()
+                .name("스터디명 1")
+                .image("파일명 1")
+                .category(category)
+                .location("장소 1")
+                .type(StudyType.OFFLINE)
+                .currentNumber(0)
+                .recruitmentNumber(10)
+                .joinType(JoinType.FREE)
+                .introduce("소개 1")
+                .accessUrl("URL 1")
+                .isRecruiting(true)
+                .visibility(Visibility.PUBLIC)
+                .account(account)
+                .build();
     }
 
     @WithMockUser
     @Test
+    @DisplayName("모든 스터디 조회")
     void studies() throws Exception {
         // given
         Long studyId = 1L;
@@ -84,25 +108,6 @@ class StudyControllerTest {
         JoinType joinType = JoinType.FREE;
         String introduce = "소개 1";
 
-        Category category = Category.builder()
-                .id(1L)
-                .name(categoryName)
-                .build();
-        Study study = Study.builder()
-                .name(name)
-                .image(filename)
-                .category(category)
-                .location(location)
-                .type(type)
-                .currentNumber(currentNumber)
-                .recruitmentNumber(recruitmentNumber)
-                .joinType(joinType)
-                .introduce(introduce)
-                .accessUrl("URL 1")
-                .isRecruiting(true)
-                .visibility(Visibility.PUBLIC)
-                .account(loginAccount)
-                .build();
         ReflectionTestUtils.setField(study, "id", studyId);
         List<StudyListDto> studyListDtos = new ArrayList<>();
         studyListDtos.add(new StudyListDto(study));
@@ -125,6 +130,7 @@ class StudyControllerTest {
 
     @WithMockUser(roles = "USER")
     @Test
+    @DisplayName("참석중인 모든 스터디 조회")
     void myStudies() throws Exception {
         // given
         Long studyId = 1L;
@@ -138,34 +144,15 @@ class StudyControllerTest {
         JoinType joinType = JoinType.FREE;
         String introduce = "소개 1";
 
-        Category category = Category.builder()
-                .id(1L)
-                .name(categoryName)
-                .build();
-        Study study = Study.builder()
-                .name(name)
-                .image(filename)
-                .category(category)
-                .location(location)
-                .type(type)
-                .currentNumber(currentNumber)
-                .recruitmentNumber(recruitmentNumber)
-                .joinType(joinType)
-                .introduce(introduce)
-                .accessUrl("URL 1")
-                .isRecruiting(true)
-                .visibility(Visibility.PUBLIC)
-                .account(loginAccount)
-                .build();
         ReflectionTestUtils.setField(study, "id", studyId);
         List<StudyListDto> studyListDtos = new ArrayList<>();
         studyListDtos.add(new StudyListDto(study));
 
-        given(studyService.findAllStudiesByAccount(eq(loginAccount))).willReturn(studyListDtos);
+        given(studyService.findAllStudiesByAccount(eq(account))).willReturn(studyListDtos);
 
         // when & then
         mockMvc.perform(get("/api/v1/my-studies")
-                        .with(user(new AccountAdapter(loginAccount))))
+                        .with(user(new AccountAdapter(account))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].name").value(name))
                 .andExpect(jsonPath("$.[0].filename").value(filename))
@@ -180,6 +167,7 @@ class StudyControllerTest {
 
     @WithMockUser(roles = "USER")
     @Test
+    @DisplayName("스터디 생성")
     void create() throws Exception {
         // given
         Long studyId = 1L;
@@ -192,12 +180,12 @@ class StudyControllerTest {
         JoinType joinType = JoinType.FREE;
         String introduce = "소개 1";
 
-        given(studyService.createStudy(any(), eq(loginAccount))).willReturn(studyId);
+        given(studyService.createStudy(any(), eq(account))).willReturn(studyId);
 
         // when & then
         mockMvc.perform(post("/api/v1/studies")
                         .with(csrf())
-                        .with(user(new AccountAdapter(loginAccount)))
+                        .with(user(new AccountAdapter(account)))
                         .contentType("multipart/form-data")
                         .param("name", name)
                         .param("categoryId", String.valueOf(categoryId))
@@ -213,17 +201,18 @@ class StudyControllerTest {
 
     @WithMockUser(roles = "USER")
     @Test
+    @DisplayName("스터디 수정")
     void update() throws Exception {
         // given
         Long studyId = 1L;
         StudyUpdateDto studyUpdateDto = new StudyUpdateDto(studyId, "스터디명 1", 1L, StudyType.ONLINE, "장소 1", 5, Visibility.PUBLIC, JoinType.FREE, "소개 1");
 
-        given(studyService.updateStudy(any(), eq(studyId), eq(loginAccount))).willReturn(studyId);
+        given(studyService.updateStudy(any(), eq(studyId), eq(account))).willReturn(studyId);
 
         // when & then
         mockMvc.perform(patch("/api/v1/studies/" + studyId)
                         .with(csrf())
-                        .with(user(new AccountAdapter(loginAccount)))
+                        .with(user(new AccountAdapter(account)))
                         .contentType("application/json")
                         .content(new ObjectMapper().writeValueAsString(studyUpdateDto)))
                 .andExpect(status().isOk())
@@ -232,6 +221,7 @@ class StudyControllerTest {
 
     @WithMockUser(roles = "USER")
     @Test
+    @DisplayName("특정 스터디 조회")
     void study() throws Exception {
         // given
         Long studyId = 1L;
@@ -250,32 +240,13 @@ class StudyControllerTest {
         String accessUrl = "URL 1";
         String creatorEmail = "이메일 1";
 
-        Category category = Category.builder()
-                .id(categoryId)
-                .name(categoryName)
-                .build();
-        Study study = Study.builder()
-                .name(name)
-                .image(filename)
-                .category(category)
-                .location(location)
-                .type(type)
-                .currentNumber(currentNumber)
-                .recruitmentNumber(recruitmentNumber)
-                .joinType(joinType)
-                .introduce(introduce)
-                .accessUrl(accessUrl)
-                .isRecruiting(isRecruiting)
-                .visibility(visibility)
-                .account(loginAccount)
-                .build();
         ReflectionTestUtils.setField(study, "id", studyId);
 
         given(studyService.findStudyById(eq(studyId))).willReturn(new StudyDto(study));
 
         // when & then
         mockMvc.perform(get("/api/v1/studies/" + studyId)
-                        .with(user(new AccountAdapter(loginAccount))))
+                        .with(user(new AccountAdapter(account))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(name))
                 .andExpect(jsonPath("$.filename").value(filename))
@@ -296,6 +267,7 @@ class StudyControllerTest {
 
     @WithMockUser(roles = "USER")
     @Test
+    @DisplayName("특정 URL을 가진 스터디 ID 조회")
     void studyId() throws Exception {
         // given
         Long studyId = 1L;
@@ -305,37 +277,35 @@ class StudyControllerTest {
 
         // when & then
         mockMvc.perform(get("/api/v1/access-url/" + accessUrl)
-                        .with(user(new AccountAdapter(loginAccount))))
+                        .with(user(new AccountAdapter(account))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(studyId));
     }
 
     @WithMockUser(roles = "USER")
     @Test
+    @DisplayName("스터디 삭제")
     void delete_() throws Exception {
         // given
         Long studyId = 1L;
 
-        given(studyService.deleteStudy(eq(studyId), eq(loginAccount))).willReturn(studyId);
+        given(studyService.deleteStudy(eq(studyId), eq(account))).willReturn(studyId);
 
         // when & then
         mockMvc.perform(delete("/api/v1/studies/" + studyId)
                         .with(csrf())
-                        .with(user(new AccountAdapter(loginAccount))))
+                        .with(user(new AccountAdapter(account))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(studyId));
     }
 
     @WithMockUser(roles = "USER")
     @Test
+    @DisplayName("모든 카테고리 조회")
     void categories() throws Exception {
         // given
         Long id = 1L;
         String name = "카테고리 1";
-        Category category = Category.builder()
-                .id(id)
-                .name(name)
-                .build();
 
         List<CategoryListDto> categoryListDtos = new ArrayList<>();
         categoryListDtos.add(new CategoryListDto(category));
@@ -344,7 +314,7 @@ class StudyControllerTest {
 
         // when & then
         mockMvc.perform(get("/api/v1/categories")
-                        .with(user(new AccountAdapter(loginAccount))))
+                        .with(user(new AccountAdapter(account))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].id").value(id))
                 .andExpect(jsonPath("$.[0].name").value(name));
@@ -352,86 +322,131 @@ class StudyControllerTest {
 
     @WithMockUser(roles = "USER")
     @Test
+    @DisplayName("스터디 마감")
     void close() throws Exception {
         // given
         Long id = 1L;
-        given(studyService.closeStudy(eq(id), eq(loginAccount))).willReturn(id);
+        given(studyService.closeStudy(eq(id), eq(account))).willReturn(id);
 
         // when & then
         mockMvc.perform(post("/api/v1/studies/" + id + "/close")
                         .with(csrf())
-                        .with(user(new AccountAdapter(loginAccount))))
+                        .with(user(new AccountAdapter(account))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(id));
     }
 
     @WithMockUser(roles = "USER")
     @Test
+    @DisplayName("스터디 참가 및 참석 신청")
     void participate() throws Exception {
-        // given
-        Long studyId = 1L;
-        Long id = 1L;
-        String message = "메시지 1";
-        class MessageDto implements Serializable {
-            final String message;
+        // 스터디 참가인 경우
+        {
+            // given
+            Long studyId = 1L;
+            Long id = 1L;
+            JoinType joinType = JoinType.FREE;
+            String message = "";
 
-            public MessageDto(String message) {
-                this.message = message;
-            }
+            class MessageDto implements Serializable {
+                final String message;
 
-            public String getMessage() {
-                return message;
+                public MessageDto(String message) {
+                    this.message = message;
+                }
+
+                public String getMessage() {
+                    return message;
+                }
             }
+            MessageDto messageObject = new MessageDto(message);
+
+            ReflectionTestUtils.setField(study, "joinType", joinType);
+
+            given(studyService.participateStudy(eq(studyId), any(), eq(account))).willReturn(id);
+
+            // when & then
+            mockMvc.perform(post("/api/v1/studies/" + studyId + "/participants")
+                            .contentType("application/json")
+                            .with(csrf())
+                            .content(new ObjectMapper().writeValueAsString(messageObject))
+                            .with(user(new AccountAdapter(account))))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$").value(id));
         }
-        MessageDto messageObject = new MessageDto(message);
+        // 스터디 참석 신청인 경우
+        {
+            // given
+            Long studyId = 1L;
+            Long id = 1L;
+            String message = "메시지 1";
+            JoinType joinType = JoinType.APPROVAL;
 
-        given(studyService.participateStudy(eq(studyId), eq(message), eq(loginAccount))).willReturn(id);
+            class MessageDto implements Serializable {
+                final String message;
 
-        // when & then
-        mockMvc.perform(post("/api/v1/studies/" + studyId + "/participants")
-                        .contentType("application/json")
-                        .content(new ObjectMapper().writeValueAsString(messageObject))
-                        .with(csrf())
-                        .with(user(new AccountAdapter(loginAccount))))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").value(id));
+                public MessageDto(String message) {
+                    this.message = message;
+                }
+
+                public String getMessage() {
+                    return message;
+                }
+            }
+            MessageDto messageObject = new MessageDto(message);
+            ReflectionTestUtils.setField(study, "joinType", joinType);
+
+            given(studyService.participateStudy(eq(studyId), eq(message), eq(account))).willReturn(id);
+
+            // when & then
+            mockMvc.perform(post("/api/v1/studies/" + studyId + "/participants")
+                            .contentType("application/json")
+                            .content(new ObjectMapper().writeValueAsString(messageObject))
+                            .with(csrf())
+                            .with(user(new AccountAdapter(account))))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$").value(id));
+        }
     }
 
     @WithMockUser(roles = "USER")
     @Test
+    @DisplayName("스터디 탈퇴")
     void withdraw() throws Exception {
         // given
         Long id = 1L;
         Long studyId = 1L;
 
-        given(studyService.withdrawStudy(eq(studyId), eq(loginAccount))).willReturn(id);
+        given(studyService.withdrawStudy(eq(studyId), eq(account))).willReturn(id);
 
         // when & then
         mockMvc.perform(post("/api/v1/studies/" + studyId + "/withdraw")
                         .with(csrf())
-                        .with(user(new AccountAdapter(loginAccount))))
+                        .with(user(new AccountAdapter(account))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(id));
     }
 
     @WithMockUser(roles = "USER")
     @Test
+    @DisplayName("스터디 참석 신청 취소")
     void cancel() throws Exception {
         // given
         Long id = 1L;
         Long studyId = 1L;
 
-        given(studyService.cancelApplicationStudy(eq(studyId), eq(loginAccount))).willReturn(id);
+        given(studyService.cancelApplicationStudy(eq(studyId), eq(account))).willReturn(id);
 
         // when & then
         mockMvc.perform(post("/api/v1/studies/" + studyId + "/cancel")
                         .with(csrf())
-                        .with(user(new AccountAdapter(loginAccount))))
+                        .with(user(new AccountAdapter(account))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(id));
     }
 
     @Test
+    @DisplayName("스터디 이미지 조회")
     void showStudyImage() throws Exception {
         // given
         String filename = "default.jpg";
@@ -441,7 +456,7 @@ class StudyControllerTest {
 
         // when & then
         mockMvc.perform(get("/images/study/" + filename)
-                .with(user(new AccountAdapter(loginAccount))))
+                .with(user(new AccountAdapter(account))))
                 .andExpect(status().isOk());
     }
 }

@@ -6,6 +6,7 @@ import com.astar.gostudy_be.security.dto.Token;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,6 +30,7 @@ class TokenServiceTest {
     AccountRepository accountRepository;
 
     @Test
+    @DisplayName("JWT 토큰 생성")
     void generateToken() {
         // given
         String secretKey = "psh3253";
@@ -48,6 +50,7 @@ class TokenServiceTest {
     }
 
     @Test
+    @DisplayName("JWT 토큰 검증")
     void verifyToken() {
         // given
         String email = "이메일 1";
@@ -75,6 +78,7 @@ class TokenServiceTest {
     }
 
     @Test
+    @DisplayName("토큰 소유자 검증")
     void verifyTokenOwner() {
         // given
         String email = "이메일 1";
@@ -113,6 +117,7 @@ class TokenServiceTest {
     }
 
     @Test
+    @DisplayName("토큰으로부터 사용자 이메일 조회")
     void getUid() {
         // given
         String email = "이메일 1";
@@ -139,6 +144,7 @@ class TokenServiceTest {
     }
 
     @Test
+    @DisplayName("Refresh 토큰 저장")
     void saveRefreshToken() {
         // given
         Long id = 1L;
@@ -179,6 +185,7 @@ class TokenServiceTest {
     }
 
     @Test
+    @DisplayName("Refresh 토큰 삭제")
     void deleteRefreshToken() {
         // given
         Long id = 1L;

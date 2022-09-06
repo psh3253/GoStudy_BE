@@ -59,17 +59,11 @@ public class GoStudyBeApplication {
     public static void copyDefaultImage() {
         try {
             InputStream profileInputStream = GoStudyBeApplication.class.getResourceAsStream( "/static/profile/thumbnail_default.png");
-//            Resource profileResource = context.getResource("classpath:" + File.separator + "static" + File.separator + "profile" + File.separator +"thumbnail_default.png");
-//            File srcProfileImage = new File(profileResource.getURI());
             File dstProfileImage = new File(Config.UPLOAD_FILE_PATH + "uploads" + File.separator + "profile" + File.separator + "thumbnail_images" + File.separator + "thumbnail_default.png");
-
             Files.copy(profileInputStream, dstProfileImage.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
             InputStream studyInputStream = GoStudyBeApplication.class.getResourceAsStream( "/static/study/thumbnail_default.jpg");
-//            Resource studyResource = context.getResource("classpath:" + File.separator + "static" + File.separator + "study" + File.separator +"thumbnail_default.jpg");
-//            File srcStudyImage = new File(studyResource.getURI());
             File dstStudyImage = new File(Config.UPLOAD_FILE_PATH + "uploads" + File.separator + "study" + File.separator + "thumbnail_images" + File.separator + "thumbnail_default.jpg");
-
             Files.copy(studyInputStream, dstStudyImage.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new RuntimeException(e);

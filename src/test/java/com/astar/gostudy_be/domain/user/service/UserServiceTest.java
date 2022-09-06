@@ -1,16 +1,20 @@
 package com.astar.gostudy_be.domain.user.service;
 
+import com.astar.gostudy_be.domain.study.entity.*;
 import com.astar.gostudy_be.domain.user.dto.AccountAdapter;
 import com.astar.gostudy_be.domain.user.dto.ProfileDto;
 import com.astar.gostudy_be.domain.user.dto.ProfileUpdateDto;
 import com.astar.gostudy_be.domain.user.entity.Account;
 import com.astar.gostudy_be.domain.user.repository.AccountRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -18,6 +22,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -31,7 +36,24 @@ class UserServiceTest {
     @Mock
     PasswordEncoder passwordEncoder;
 
+    Account account = null;
+
+    @BeforeEach
+    void setup() {
+        account = Account.builder()
+                .id(1L)
+                .email("이메일 1")
+                .password("비밀번호 1")
+                .nickname("닉네임 1")
+                .image("이미지 1")
+                .introduce("소개 1")
+                .refreshToken("리프레쉬 토큰 1")
+                .roles(Collections.singletonList("USER"))
+                .build();
+    }
+
     @Test
+    @DisplayName("특정 이메일을 가진 사용자 조회")
     void getAccount() {
         // given
         Long id = 1L;
@@ -67,6 +89,7 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("특정 이메일을 가진 사용자 정보 가져오기")
     void loadUserByUsername() {
         // given
         Long id = 1L;
@@ -76,17 +99,6 @@ class UserServiceTest {
         String image = "이미지 1";
         String introduce = "소개 1";
         String refreshToken = "리프레쉬 토큰 1";
-
-        Account account = Account.builder()
-                .id(id)
-                .email(email)
-                .password(password)
-                .nickname(nickname)
-                .image(image)
-                .introduce(introduce)
-                .refreshToken(refreshToken)
-                .roles(Collections.singletonList("USER"))
-                .build();
 
         when(accountRepository.findByEmail(email)).thenReturn(Optional.ofNullable(account));
 
@@ -104,23 +116,13 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("회원가입")
     void join() {
         // given
         Long id = 1L;
         String email = "이메일 1";
         String password = "비밀번호 1";
         String nickname = "닉네임 1";
-
-        Account account = Account.builder()
-                .id(id)
-                .email(email)
-                .password(password)
-                .nickname(nickname)
-                .image("이미지 1")
-                .introduce("소개 1")
-                .refreshToken("리프레쉬 토큰 1")
-                .roles(Collections.singletonList("USER"))
-                .build();
 
         when(passwordEncoder.encode(password)).thenReturn("인코딩 비밀번호 1");
         when(accountRepository.save(any(Account.class))).thenReturn(account);
@@ -133,28 +135,18 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("로그인")
     void login() {
         // given
         Long id = 1L;
         String email = "이메일 1";
-        String password = "인코딩 된 비밀번호 1";
+        String password = "비밀번호 1";
         String nickname = "닉네임 1";
         String image = "이미지 1";
         String introduce = "소개 1";
         String refreshToken = "리프레쉬 토큰 1";
 
-        Account account = Account.builder()
-                .id(id)
-                .email(email)
-                .password(password)
-                .nickname(nickname)
-                .image(image)
-                .introduce(introduce)
-                .refreshToken(refreshToken)
-                .roles(Collections.singletonList("USER"))
-                .build();
-
-        when(passwordEncoder.matches(password, "인코딩 된 비밀번호 1")).thenReturn(true);
+        when(passwordEncoder.matches(password, "비밀번호 1")).thenReturn(true);
         when(accountRepository.findByEmail(email)).thenReturn(Optional.ofNullable(account));
 
         // when
@@ -171,25 +163,15 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("비밀번호 변경")
     void changePassword() {
         // given
         Long id = 1L;
-        String password = "인코딩 된 비밀번호 1";
+        String password = "비밀번호 1";
         String newPassword = "새 비밀번호 1";
 
-        Account account = Account.builder()
-                .id(id)
-                .email("이메일 1")
-                .password(password)
-                .nickname("닉네임 1")
-                .image("이미지 1")
-                .introduce("소개 1")
-                .refreshToken("리프레쉬 토큰 1")
-                .roles(Collections.singletonList("USER"))
-                .build();
-
         when(accountRepository.save(any(Account.class))).thenReturn(account);
-        when(passwordEncoder.matches(password, "인코딩 된 비밀번호 1")).thenReturn(true);
+        when(passwordEncoder.matches(password, "비밀번호 1")).thenReturn(true);
 
         // when
         Long accountId = userService.changePassword(password, newPassword, account, passwordEncoder);
@@ -199,6 +181,7 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("프로필 조회")
     void getProfileByAccount() {
         // given
         Long id = 1L;
@@ -206,16 +189,6 @@ class UserServiceTest {
         String nickname = "닉네임 1";
         String image = "이미지 1";
         String introduce = "소개 1";
-
-        Account account = Account.builder()
-                .id(id)
-                .email(email)
-                .password("비밀번호 1")
-                .nickname(nickname)
-                .image(image)
-                .introduce(introduce)
-                .refreshToken("리프레쉬 토큰 1")
-                .build();
 
         // when
         ProfileDto profileDto = userService.getProfileByAccount(account);
@@ -229,19 +202,11 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("프로필 수정")
     void updateProfile() {
         // given
         Long id = 1L;
         ProfileUpdateDto profileUpdateDto = new ProfileUpdateDto("닉네임 2", true, null, "소개 2");
-        Account account = Account.builder()
-                .id(id)
-                .email("이메일 1")
-                .password("비밀번호 1")
-                .nickname("닉네임 1")
-                .image("이미지 1")
-                .introduce("소개 1")
-                .refreshToken("리프레쉬 토큰 1")
-                .build();
 
         when(accountRepository.save(any(Account.class))).thenReturn(account.update(profileUpdateDto.getNickname(), null, "default.jpg", profileUpdateDto.getIntroduce(), null, null));
 

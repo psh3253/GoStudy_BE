@@ -50,7 +50,7 @@ public class PostController {
 
     @ResponseBody
     @GetMapping("/images/post/{filename}")
-    public Resource showStudyImage(@PathVariable String filename) throws MalformedURLException {
+    public Resource showPostImage(@PathVariable String filename) throws MalformedURLException {
         File imageFile = new File(Config.UPLOAD_FILE_PATH + "uploads/post/thumbnail_images/thumbnail_" + filename);
         return new UrlResource("file:" + imageFile.getAbsolutePath());
     }

@@ -19,6 +19,7 @@ public class PostDto {
     private String image;
 
     private Long commentCount;
+
     private String creatorEmail;
 
     private String creatorNickname;
