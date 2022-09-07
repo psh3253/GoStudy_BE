@@ -95,7 +95,8 @@ spring.security.oauth2.client.registration.kakao.client-secret=카카오 CLIENT 
 + 로그인 및 회원가입
 + 카카오 간편 로그인
 + 스터디 생성, 수정, 삭제
-+ 스터디 게시판
++ 이미지가 첨부가능한 스터디 게시판
++ 랜덤 URL을 통한 비공개 스터디 접근
 + 스터디 가입, 신청, 수락, 퇴장
 + 자신의 프로필 및 스터디 모아보기
 
