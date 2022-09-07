@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/v1/join", "/api/v1/login", "/api/v1/studies", "/images/**").permitAll()
+                .antMatchers("/api/v1/token/refresh", "/api/v1/join", "/api/v1/login", "/api/v1/studies", "/images/**").permitAll()
                 .antMatchers("/api/v1/**").hasRole("USER")
                 .anyRequest().authenticated()
                 .and()
