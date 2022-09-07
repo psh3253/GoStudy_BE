@@ -37,7 +37,7 @@ public class TokenController {
                 tokenService.saveRefreshToken(newToken.getRefreshToken(), email);
 
                 ResponseCookie accessTokenCookie = ResponseCookie.from("Auth", newToken.getAccessToken())
-                        .path("/").httpOnly(true).domain(Config.WEB_COOKIE_DOMAIN).maxAge(60L * 60L * 6L).build();
+                        .path("/").httpOnly(true).domain(Config.WEB_COOKIE_DOMAIN).maxAge(60L * 1L).build();
                 ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh", newToken.getRefreshToken())
                         .path("/").httpOnly(true).domain(Config.WEB_COOKIE_DOMAIN).maxAge(60L * 60L * 24L * 30L).build();
                 ResponseCookie isLoginCookie = ResponseCookie.from("IsLogin", "true")
