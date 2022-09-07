@@ -60,7 +60,7 @@ public class JwtAuthFilter extends GenericFilterBean {
             }
         }
         else if(!allowedURI.contains(((HttpServletRequest) request).getRequestURI()) && !((HttpServletRequest) request).getRequestURI().startsWith("/images") && token == null && refreshToken != null) {
-            ((HttpServletResponse) response).sendRedirect("/api/v1/token/refresh");
+            ((HttpServletResponse) response).sendRedirect("/api/v1/token/refresh?redirection-uri=" + ((HttpServletRequest) request).getRequestURI());
             return;
         }
 

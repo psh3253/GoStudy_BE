@@ -6,6 +6,7 @@ import com.astar.gostudy_be.security.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.Cookie;
@@ -20,7 +21,7 @@ public class TokenController {
     private final TokenService tokenService;
 
     @GetMapping("/api/v1/token/refresh")
-    public ResponseEntity<Token> refreshAuth(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Token> refreshAuth(@RequestParam(value = "redirect-uri") String uri, HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = ((HttpServletRequest) request).getCookies();
         String token = null;
         String refreshToken = null;
@@ -51,6 +52,8 @@ public class TokenController {
                         .body(newToken);
             }
         }
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.PERMANENT_REDIRECT)
+                .location(URI.create(Config.WEB_URL + uri))
+                .build();
     }
 }
