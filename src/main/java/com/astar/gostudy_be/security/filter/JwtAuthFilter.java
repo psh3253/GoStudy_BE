@@ -46,7 +46,7 @@ public class JwtAuthFilter extends GenericFilterBean {
         }
 
         // token이 존재하는 경우
-        if (!Objects.equals(((HttpServletRequest) request).getRequestURI(), "/token/refresh") && token != null && !Objects.equals(token, "deleted")) {
+        if (!Objects.equals(((HttpServletRequest) request).getRequestURI(), "/api/v1/token/refresh") && token != null && !Objects.equals(token, "deleted")) {
             if (!tokenService.verifyToken(token)) { // 토큰 유효기간 만료
                 ((HttpServletResponse) response).sendRedirect("/api/v1/token/refresh");
                 return;
