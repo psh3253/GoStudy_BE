@@ -20,9 +20,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,6 +28,8 @@ public class JwtAuthFilter extends GenericFilterBean {
     private final TokenService tokenService;
 
     private final UserService userService;
+
+    private final HashSet<String> allowedURI = new HashSet<>(Arrays.asList("/api/v1/token/refresh", "/api/v1/join", "/api/v1/login", "/api/v1/studies"));
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -46,7 +46,7 @@ public class JwtAuthFilter extends GenericFilterBean {
         }
 
         // token이 존재하는 경우
-        if (!Objects.equals(((HttpServletRequest) request).getRequestURI(), "/api/v1/token/refresh") && token != null && !Objects.equals(token, "deleted")) {
+        if (!allowedURI.contains(((HttpServletRequest) request).getRequestURI()) && !((HttpServletRequest) request).getRequestURI().startsWith("/images") && token != null && !Objects.equals(token, "deleted")) {
             if (!tokenService.verifyToken(token)) { // 토큰 유효기간 만료
                 ((HttpServletResponse) response).sendRedirect("/api/v1/token/refresh");
                 return;
@@ -59,7 +59,7 @@ public class JwtAuthFilter extends GenericFilterBean {
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }
-        else if(token == null && refreshToken != null) {
+        else if(!allowedURI.contains(((HttpServletRequest) request).getRequestURI()) && !((HttpServletRequest) request).getRequestURI().startsWith("/images") && token == null && refreshToken != null) {
             ((HttpServletResponse) response).sendRedirect("/api/v1/token/refresh");
             return;
         }
