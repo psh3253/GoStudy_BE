@@ -21,7 +21,7 @@ public class TokenController {
     private final TokenService tokenService;
 
     @GetMapping("/api/v1/token/refresh")
-    public ResponseEntity<Token> refreshAuth(@RequestParam(value = "redirect-uri") String uri, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Token> refreshAuth(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = ((HttpServletRequest) request).getCookies();
         String token = null;
         String refreshToken = null;
