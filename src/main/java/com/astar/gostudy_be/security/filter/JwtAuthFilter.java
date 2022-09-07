@@ -59,6 +59,10 @@ public class JwtAuthFilter extends GenericFilterBean {
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }
+        else if(token == null && refreshToken != null) {
+            ((HttpServletResponse) response).sendRedirect("/api/v1/token/refresh");
+            return;
+        }
 
         chain.doFilter(request, response);
     }
