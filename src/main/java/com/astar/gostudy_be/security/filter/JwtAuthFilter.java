@@ -36,7 +36,7 @@ public class JwtAuthFilter extends GenericFilterBean {
         Cookie[] cookies = ((HttpServletRequest) request).getCookies();
         String token = null;
         String refreshToken = null;
-        if(cookies != null) {
+        if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("Auth"))
                     token = cookie.getValue();
@@ -44,17 +44,18 @@ public class JwtAuthFilter extends GenericFilterBean {
                     refreshToken = cookie.getValue();
             }
         }
+        // token이 존재하는 경우
         if (token != null && !Objects.equals(token, "deleted")) {
-            if (tokenService.verifyToken(token)) {
+            if (!tokenService.verifyToken(token)) { // 토큰 유효기간 만료
+                ((HttpServletResponse) response).sendRedirect("/api/v1/token/refresh");
+                return;
+            } else { // 로그인 성공
                 String email = tokenService.getUid(token);
 
                 Account account = userService.getAccount(email);
 
                 Authentication auth = getAuthentication(account);
                 SecurityContextHolder.getContext().setAuthentication(auth);
-            } else {
-                ((HttpServletResponse) response).sendRedirect("/token/refresh");
-                return;
             }
         }
 
