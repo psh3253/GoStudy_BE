@@ -51,8 +51,6 @@ public class TokenController {
                         .body(newToken);
             }
         }
-        return ResponseEntity.status(HttpStatus.PERMANENT_REDIRECT)
-                .location(URI.create(Config.WEB_URL + "/login"))
-                .build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
