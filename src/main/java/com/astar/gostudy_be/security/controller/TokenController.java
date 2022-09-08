@@ -17,11 +17,8 @@ import java.nio.charset.StandardCharsets;
 @RestController
 public class TokenController {
     private final TokenService tokenService;
-
-    @GetMapping("/api/v1/token/refresh")
-    @PostMapping("/api/v1/token/refresh")
-    @PatchMapping("/api/v1/token/refresh")
-    @DeleteMapping("/api/v1/token/refresh")
+    
+    @RequestMapping(value = "/api/v1/token/refresh", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PATCH, RequestMethod.DELETE})
     public ResponseEntity<Token> refreshAuth(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = ((HttpServletRequest) request).getCookies();
         String token = null;
