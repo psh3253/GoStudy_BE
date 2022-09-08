@@ -29,7 +29,7 @@ public class JwtAuthFilter extends GenericFilterBean {
 
     private final UserService userService;
 
-    private final HashSet<String> allowedURI = new HashSet<>(Arrays.asList("/api/v1/token/refresh", "/api/v1/join", "/api/v1/login", "/api/v1/studies"));
+    private final HashSet<String> allowedURI = new HashSet<>(Arrays.asList("/api/v1/token/refresh", "/api/v1/join", "/api/v1/login", "/api/v1/studies", "/error"));
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
