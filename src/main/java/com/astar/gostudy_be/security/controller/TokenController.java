@@ -5,9 +5,7 @@ import com.astar.gostudy_be.security.dto.Token;
 import com.astar.gostudy_be.security.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +19,9 @@ public class TokenController {
     private final TokenService tokenService;
 
     @GetMapping("/api/v1/token/refresh")
+    @PostMapping("/api/v1/token/refresh")
+    @PatchMapping("/api/v1/token/refresh")
+    @DeleteMapping("/api/v1/token/refresh")
     public ResponseEntity<Token> refreshAuth(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = ((HttpServletRequest) request).getCookies();
         String token = null;
