@@ -36,6 +36,7 @@ public class JwtAuthFilter extends GenericFilterBean {
         Cookie[] cookies = ((HttpServletRequest) request).getCookies();
         String token = null;
         String refreshToken = null;
+        log.info(((HttpServletRequest) request).getRequestURI());
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("Auth"))
