@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 @RestController
 public class TokenController {
     private final TokenService tokenService;
-    
+
     @RequestMapping(value = "/api/v1/token/refresh", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PATCH, RequestMethod.DELETE})
     public ResponseEntity<Token> refreshAuth(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = ((HttpServletRequest) request).getCookies();
@@ -36,13 +36,13 @@ public class TokenController {
                 tokenService.saveRefreshToken(newToken.getRefreshToken(), email);
 
                 ResponseCookie accessTokenCookie = ResponseCookie.from("Auth", newToken.getAccessToken())
-                        .path("/").httpOnly(true).domain(Config.WEB_COOKIE_DOMAIN).maxAge(60L * 1L).build();
+                        .path("/").httpOnly(true).domain(Config.WEB_COOKIE_DOMAIN).maxAge(60L * 60L * 3L).build();
                 ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh", newToken.getRefreshToken())
-                        .path("/").httpOnly(true).domain(Config.WEB_COOKIE_DOMAIN).maxAge(60L * 60L * 24L * 30L).build();
+                        .path("/").httpOnly(true).domain(Config.WEB_COOKIE_DOMAIN).maxAge(60L * 60L * 24L * 14L).build();
                 ResponseCookie isLoginCookie = ResponseCookie.from("IsLogin", "true")
-                        .path("/").domain(Config.WEB_COOKIE_DOMAIN).maxAge(60L * 60L * 6L).build();
+                        .path("/").domain(Config.WEB_COOKIE_DOMAIN).maxAge(60L * 60L * 24L * 14L).build();
                 ResponseCookie userEmailCookie = ResponseCookie.from("UserEmail", email)
-                        .path("/").domain(Config.WEB_COOKIE_DOMAIN).maxAge(60L * 60L * 6L).build();
+                        .path("/").domain(Config.WEB_COOKIE_DOMAIN).maxAge(60L * 60L * 24L * 14L).build();
 
                 return ResponseEntity.status(HttpStatus.OK)
                         .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), refreshTokenCookie.toString(), isLoginCookie.toString(), userEmailCookie.toString())
