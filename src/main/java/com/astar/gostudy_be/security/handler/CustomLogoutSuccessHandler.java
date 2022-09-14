@@ -31,22 +31,22 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         accessTokenCookie.setPath("/");
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setDomain(Config.WEB_COOKIE_DOMAIN);
-        accessTokenCookie.setMaxAge(-1);
+        accessTokenCookie.setMaxAge(0);
 
         Cookie refreshTokenCookie = new Cookie("Refresh", "deleted");
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setDomain(Config.WEB_COOKIE_DOMAIN);
-        refreshTokenCookie.setMaxAge(-1);
+        refreshTokenCookie.setMaxAge(0);
 
         Cookie isLoginCookie = new Cookie("IsLogin", "false");
         isLoginCookie.setPath("/");
         isLoginCookie.setDomain(Config.WEB_COOKIE_DOMAIN);
-        isLoginCookie.setMaxAge(-1);
+        isLoginCookie.setMaxAge(0);
 
         Cookie userEmailCookie = new Cookie("UserEmail", "deleted");
         userEmailCookie.setPath("/");
         userEmailCookie.setDomain(Config.WEB_COOKIE_DOMAIN);
-        userEmailCookie.setMaxAge(-1);
+        userEmailCookie.setMaxAge(0);
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
