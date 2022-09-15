@@ -24,7 +24,7 @@ cd compose
 docker compose up -d
 ```
 + [GoStudy's Frontend Server](https://github.com/psh3253/go_study_fe)
-+ [GoStudy's Jenkins Server](http://be.goStudy.kr:8080)
++ [GoStudy's Jenkins Server](http://be.goStudy.kro.kr:8080)
 + [GoStudy's Web Site](http://gostudy.kro.kr:8080)
 
 ### Prerequisites / 선행 조건
