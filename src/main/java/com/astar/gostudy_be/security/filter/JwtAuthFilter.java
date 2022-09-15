@@ -29,14 +29,14 @@ public class JwtAuthFilter extends GenericFilterBean {
 
     private final UserService userService;
 
-    private final HashSet<String> allowedURI = new HashSet<>(Arrays.asList("/api/v1/token/refresh", "/api/v1/join", "/api/v1/login", "/api/v1/studies", "/error"));
+    private final HashSet<String> allowedPostURI = new HashSet<>(Arrays.asList("/api/v1/join", "/api/v1/login"));
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        Cookie[] cookies = ((HttpServletRequest) request).getCookies();
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        Cookie[] cookies = httpRequest.getCookies();
         String token = null;
         String refreshToken = null;
-        log.info(((HttpServletRequest) request).getRequestURI());
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("Auth"))
@@ -45,26 +45,54 @@ public class JwtAuthFilter extends GenericFilterBean {
                     refreshToken = cookie.getValue();
             }
         }
-
-        // token이 존재하는 경우
-        if (!allowedURI.contains(((HttpServletRequest) request).getRequestURI()) && !((HttpServletRequest) request).getRequestURI().startsWith("/images") && token != null && !Objects.equals(token, "deleted")) {
-            if (!tokenService.verifyToken(token)) { // 토큰 유효기간 만료
-                ((HttpServletResponse) response).sendRedirect("/api/v1/token/refresh");
-                return;
-            } else { // 로그인 성공
-                String email = tokenService.getUid(token);
-
-                Account account = userService.getAccount(email);
-
-                Authentication auth = getAuthentication(account);
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            }
+        if(Objects.equals(httpRequest.getMethod(), "OPTIONS"))
+        {
+            chain.doFilter(request, response);
+            return;
         }
-        else if(!allowedURI.contains(((HttpServletRequest) request).getRequestURI()) && !((HttpServletRequest) request).getRequestURI().startsWith("/images") && token == null && refreshToken != null) {
-            ((HttpServletResponse) response).sendRedirect("/api/v1/token/refresh");
+        // 로그인 또는 회원가입
+        if(allowedPostURI.contains(httpRequest.getRequestURI()) && Objects.equals(httpRequest.getMethod(), "POST"))
+        {
+            chain.doFilter(request, response);
+            return;
+        }
+        // 토큰 재발급 링크인 경우
+        if(Objects.equals(httpRequest.getRequestURI(), "/api/v1/token/refresh"))
+        {
+            chain.doFilter(request, response);
+            return;
+        }
+        // 메인 페이지 또는 이미지인 경우
+        if((Objects.equals(httpRequest.getRequestURI(), "/api/v1/studies") || httpRequest.getRequestURI().startsWith("/images")) && Objects.equals(httpRequest.getMethod(), "GET")) {
+            chain.doFilter(request, response);
             return;
         }
 
+        // token이 존재하는 경우
+        if(token != null && !Objects.equals(token, "deleted"))
+        {
+            if (!tokenService.verifyToken(token)) { // 토큰 유효기간 만료
+                ((HttpServletResponse) response).sendRedirect("/api/v1/token/refresh");
+                return;
+            }
+            // 인증 성공
+            String email = tokenService.getUid(token);
+
+            Account account = userService.getAccount(email);
+
+            Authentication auth = getAuthentication(account);
+            SecurityContextHolder.getContext().setAuthentication(auth);
+
+            chain.doFilter(request, response);
+            return;
+        }
+        // 토큰 미존재 && 리프레쉬 토큰 존재
+        if(token == null && refreshToken != null)
+        {
+            ((HttpServletResponse) response).sendRedirect("/api/v1/token/refresh");
+            return;
+        }
+        // 리프레쉬 토큰 미존재
         chain.doFilter(request, response);
     }
 
