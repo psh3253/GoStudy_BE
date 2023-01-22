@@ -113,14 +113,6 @@ spring.security.oauth2.client.registration.kakao.client-secret=카카오 CLIENT 
 + 스터디 구성인원 상호평가 기능 추가
 + 캐시서버 구축
 
-## Stress Test Result / 부하 테스트 결과
-
-### 캐시서버 구축 전
-![](stress_testing_1.png)
-
-### 캐시서버 구축 후
-업로드 예정
-
 ## License / 라이센스
 
 이 프로젝트는 GPL-3.0 라이센스로 라이센스가 부여되어 있습니다. 자세한 내용은 LICENSE 파일을 참고하세요.
