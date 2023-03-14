@@ -107,7 +107,6 @@ spring.security.oauth2.client.registration.kakao.client-secret=카카오 CLIENT 
 + Docker Container를 사용하여 프로젝트 배포
 + Jenkins와 Github를 사용하여 CI/CD 환경 구축
 + Vue.js를 사용하여 프로트엔드 서버 구축
-+ Jmeter를 통한 부하테스트
 
 ## Todo
 + 스터디 구성인원 상호평가 기능 추가
